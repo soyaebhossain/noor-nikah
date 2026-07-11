@@ -101,6 +101,29 @@ const styles = `
 .nn .pcard h4{font-size:16px;color:${C.green900};margin:2px 0 10px;}
 .nn .pcard .row{display:flex;gap:7px;font-size:13.5px;color:${C.muted};margin-bottom:5px;align-items:center;}
 .nn .pcard .deen{margin-top:10px;display:inline-block;font-size:12px;background:rgba(201,162,39,.14);color:#8a6d12;padding:4px 10px;border-radius:999px;}
+.nn .match-card{cursor:default;border-radius:20px;box-shadow:0 12px 32px -24px rgba(11,61,46,.45);}
+.nn .match-card:hover{transform:translateY(-3px);}
+.nn .match-head{display:grid;grid-template-columns:62px 1fr auto;gap:12px;align-items:center;padding:14px;background:#f2faf7;border-bottom:1px solid ${C.line};}
+.nn .match-ring{width:60px;height:60px;border-radius:50%;display:grid;place-items:center;position:relative;background:conic-gradient(#12b886 calc(var(--score)*1%),#d8eee6 0);}
+.nn .match-ring:after{content:"";position:absolute;inset:6px;border-radius:50%;background:#f2faf7;}
+.nn .match-ring span{position:relative;z-index:1;font-size:20px;font-weight:700;color:#07956c;line-height:1;text-align:center;}
+.nn .match-ring small{display:block;font-size:8px;font-weight:500;color:${C.muted};margin-top:3px;}
+.nn .match-title b{display:block;color:${C.green900};font-size:16px;}
+.nn .match-title span{font-size:12px;color:${C.muted};}
+.nn .perfect{text-align:center;color:${C.muted};font-size:11px;}.nn .perfect b{display:block;color:#07956c;font-size:19px;}
+.nn .match-card .avatar{height:142px;background:linear-gradient(160deg,#fff 0 36%,#f7f4fa);}
+.nn .match-card .avatar .type,.nn .match-card .avatar .views{position:absolute;top:12px;background:#fff;border:1px solid ${C.line};box-shadow:0 5px 14px rgba(20,30,26,.1);border-radius:999px;padding:7px 13px;font-size:12px;display:flex;align-items:center;gap:6px;}
+.nn .match-card .avatar .type{left:12px}.nn .match-card .avatar .views{right:12px}
+.nn .match-card .avatar-icon{width:72px;height:72px;border-radius:50%;background:${C.green900};display:grid;place-items:center;margin-top:20px;}
+.nn .match-card .bio-no{position:absolute;bottom:-16px;background:#fff;border:1px solid ${C.line};border-radius:999px;padding:8px 20px;box-shadow:0 6px 13px rgba(220,80,220,.2);font-size:13px;color:${C.ink};}
+.nn .verified-badge{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#1689e5;color:#fff;font-size:12px;font-weight:800;vertical-align:middle;box-shadow:0 2px 7px rgba(22,137,229,.3);}
+.nn .barakah-hero{background:linear-gradient(135deg,#eaf6ff,#f5fbf8);border:1px solid rgba(22,137,229,.18);border-radius:24px;padding:42px;display:grid;grid-template-columns:1.2fr .8fr;gap:30px;align-items:center;}
+.nn .barakah-price{background:#fff;border:1px solid ${C.line};border-radius:20px;padding:28px;box-shadow:0 20px 50px -35px rgba(11,61,46,.5);text-align:center;}
+.nn .barakah-list{list-style:none;margin:22px 0}.nn .barakah-list li{display:flex;gap:10px;align-items:flex-start;padding:9px 0;color:${C.ink};}
+.nn .match-card .body{padding:34px 18px 18px;text-align:center;}
+.nn .match-facts{display:flex;justify-content:center;gap:13px;flex-wrap:wrap;color:${C.muted};font-size:12px;margin-bottom:14px;}
+.nn .match-facts span{display:inline-flex;align-items:center;gap:4px;}
+.nn .match-card .full-bio{width:100%;background:#fff;border:1px solid ${C.line};box-shadow:0 5px 10px rgba(220,80,220,.18);}
 
 .nn .values{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
 .nn .val{display:flex;gap:14px;padding:22px;background:${C.card};border:1px solid ${C.line};border-radius:16px;}
@@ -108,7 +131,7 @@ const styles = `
 .nn .val h3{font-size:17px;color:${C.green900};margin-bottom:4px;}
 .nn .val p{font-size:14px;color:${C.muted};}
 
-.nn .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:stretch;}
+.nn .plans{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;align-items:stretch;}
 .nn .plan{background:${C.card};border:1px solid ${C.line};border-radius:20px;padding:30px 26px;display:flex;flex-direction:column;}
 .nn .plan.feat{background:${C.green900};color:#fff;border-color:${C.green900};box-shadow:0 26px 60px -28px rgba(11,61,46,.6);position:relative;}
 .nn .plan .tag{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;color:${C.gold};}
@@ -234,6 +257,7 @@ const styles = `
   .nn .pd{grid-template-columns:1fr;margin-top:-40px;}
   .nn .pd-card{position:static;}
   .nn .mobile-menu.open{display:flex;}
+  .nn .barakah-hero{grid-template-columns:1fr;}
 }
 @media(max-width:560px){
   .nn .fields,.nn .steps,.nn .profiles,.nn .values,.nn .plans,.nn .stories,.nn .grid3,.nn .fgrid,.nn .frow,.nn .biorows,.nn .content-grid,.nn .contact-panel,.nn .dashboard-grid{grid-template-columns:1fr;}
@@ -250,6 +274,7 @@ const I = {
   heart: <path d="M12 20s-7-4.5-9.5-9C1 8 3 4.5 6.5 4.5c2 0 3.2 1.2 5.5 3.5 2.3-2.3 3.5-3.5 5.5-3.5C21 4.5 23 8 21.5 11 19 15.5 12 20 12 20z" />,
   users: <><circle cx="9" cy="8" r="3.2" /><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5" /><path d="M16 5.2A3.2 3.2 0 0 1 18 11" /><path d="M17 14.6c2.4.5 4 2.4 4 5.4" /></>,
   lock: <><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></>,
+  eye: <><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6z" /><circle cx="12" cy="12" r="2.5" /></>,
   search: <><circle cx="11" cy="11" r="7" /><path d="M21 21l-4-4" /></>,
   doc: <><path d="M7 3h7l5 5v13H7z" /><path d="M14 3v5h5" /><path d="M10 13h6M10 17h6" /></>,
   chat: <path d="M4 5h16v11H9l-5 4z" />,
@@ -284,10 +309,14 @@ const PROFILES = [
   { id: "NN-2912", who: "পাত্র", age: 33, height: "৫'৯\"", dist: "সিলেট", area: "আম্বরখানা", job: "ব্যবসায়ী", edu: "স্নাতক", marital: "বিপত্নীক", deen: "দ্বীনদার, দানশীল", religious: "নিয়মিত নামাজি, দানে আগ্রহী।", family: "ব্যবসায়ী পরিবার।", about: "একজন দ্বীনদার সঙ্গীর সন্ধানে আছি।", complexion: "শ্যামলা" },
 ];
 
+PROFILES.forEach((profile, index) => { profile.views = 1840 + index * 417; profile.verified = index === 0 || index === 2; });
+
+const BARAKAH_PLAN = { id: "barakah", tag: "বারাকাহ্ — ব্লু ব্যাজ", meaning: "বরকত, প্রাচুর্য ও স্থায়ী কল্যাণ", price: "৳৪৯৯", per: "এককালীন · ১ বছর", feat: true, items: ["প্রোফাইলে ব্লু ভেরিফায়েড ব্যাজ", "বিশেষভাবে প্রোফাইল যাচাই", "সার্চ ফলে অগ্রাধিকার", "গুরুত্বপূর্ণ প্রোফাইল হিসেবে পরিচিতি"], cta: "বারাকাহ্ নিন" };
+
 const PLANS = [
-  { id: "free", tag: "ফ্রি", price: "৳০", per: "চিরকাল", feat: false, items: ["বায়োডাটা তৈরি", "সীমিত প্রোফাইল ব্রাউজ", "মৌলিক ফিল্টার"], cta: "শুরু করুন" },
-  { id: "premium", tag: "প্রিমিয়াম", price: "৳৯৯৯", per: "প্রতি মাস", feat: true, items: ["সব প্রোফাইল আনলক", "সরাসরি যোগাযোগ", "অগ্রাধিকার সাপোর্ট", "অ্যাডভান্সড ফিল্টার", "প্রোফাইল হাইলাইট"], cta: "প্রিমিয়াম নিন" },
-  { id: "vip", tag: "ভিআইপি", price: "৳২৪৯৯", per: "প্রতি মাস", feat: false, items: ["প্রিমিয়ামের সব সুবিধা", "ডেডিকেটেড ম্যাচমেকার", "ম্যানুয়াল প্রোফাইল বাছাই", "পরিবারের সাথে সমন্বয়"], cta: "ভিআইপি নিন" },
+  { id: "free", tag: "সাদাকাহ্ — ফ্রি", meaning: "বিনিময়হীন দান ও কল্যাণ", price: "৳০", per: "চিরকাল", feat: false, items: ["বায়োডাটা তৈরি", "সীমিত প্রোফাইল ব্রাউজ", "মৌলিক ফিল্টার"], cta: "শুরু করুন" },
+  { id: "premium", tag: "খিদমাহ্ — প্রিমিয়াম", meaning: "বিশেষ সেবা ও সহযোগিতা", price: "৳৯৯৯", per: "প্রতি মাস", feat: true, items: ["সব প্রোফাইল আনলক", "সরাসরি যোগাযোগ", "অগ্রাধিকার সাপোর্ট", "অ্যাডভান্সড ফিল্টার", "প্রোফাইল হাইলাইট"], cta: "খিদমাহ্ নিন" },
+  { id: "vip", tag: "সাফওয়াহ্ — ভিআইপি", meaning: "নির্বাচিত ও বিশিষ্ট সদস্য", price: "৳২৪৯৯", per: "প্রতি মাস", feat: false, items: ["খিদমাহ্-এর সব সুবিধা", "ডেডিকেটেড ম্যাচমেকার", "ম্যানুয়াল প্রোফাইল বাছাই", "পরিবারের সাথে সমন্বয়"], cta: "সাফওয়াহ্ নিন" },
 ];
 
 const STORIES = [
@@ -317,6 +346,7 @@ function Header({ page, go, fire }) {
           <nav className="navlinks">
             {link("home", "হোম")}
             {link("browse", "প্রোফাইল")}
+            <a className={page === "assisted" ? "active" : ""} onClick={() => go("assisted")}>সহায়ক সেবা</a>
             <a className={page === "membership" ? "active" : ""} onClick={() => go("membership")}>সদস্যপদ</a>
             <a className={page === "stories" ? "active" : ""} onClick={() => go("stories")}>সফলতার গল্প</a>
           </nav>
@@ -329,7 +359,7 @@ function Header({ page, go, fire }) {
           </div>
         </div>
         <div className={"mobile-menu" + (menu ? " open" : "")}>
-          {link("home", "হোম")}{link("browse", "প্রোফাইল")}{link("membership", "সদস্যপদ")}{link("stories", "সফলতার গল্প")}
+          {link("home", "হোম")}{link("browse", "প্রোফাইল")}{link("assisted", "সহায়ক সেবা")}{link("membership", "সদস্যপদ")}{link("stories", "সফলতার গল্প")}
           <a onClick={() => { go("login"); setMenu(false); }}>লগইন</a>
           <button className="btn btn-gold" style={{ marginTop: 12 }} onClick={() => { go("register"); setMenu(false); }}>বায়োডাটা তৈরি করুন</button>
         </div>
@@ -350,7 +380,7 @@ function Footer({ go }) {
           </div>
           <div><h5>প্ল্যাটফর্ম</h5>
             <a onClick={() => go("home")}>হোম</a><a onClick={() => go("browse")}>প্রোফাইল</a>
-            <a onClick={() => go("register")}>বায়োডাটা তৈরি</a><a onClick={() => go("membership")}>সদস্যপদ</a><a onClick={() => go("stories")}>সফলতার গল্প</a><a onClick={() => go("login")}>লগইন</a></div>
+            <a onClick={() => go("register")}>বায়োডাটা তৈরি</a><a onClick={() => go("assisted")}>সহায়ক সেবা</a><a onClick={() => go("membership")}>সদস্যপদ</a><a onClick={() => go("stories")}>সফলতার গল্প</a><a onClick={() => go("login")}>লগইন</a></div>
           <div><h5>সহায়তা</h5><a onClick={() => go("contact")}>যোগাযোগ</a><a onClick={() => go("safety")}>নিরাপত্তা টিপস</a><a onClick={() => go("faq")}>প্রশ্ন ও উত্তর</a></div>
           <div><h5>আইনি</h5><a onClick={() => go("privacy")}>গোপনীয়তা নীতি</a><a onClick={() => go("terms")}>ব্যবহারের শর্ত</a></div>
         </div>
@@ -363,7 +393,24 @@ function Footer({ go }) {
   );
 }
 
-const PCard = ({ p, go }) => (
+const PCard = ({ p, go, match }) => match ? (
+  <div className="pcard match-card">
+    <div className="match-head">
+      <div className="match-ring" style={{ "--score": match.score }}><span>{match.score}<small>ম্যাচ</small></span></div>
+      <div className="match-title"><b>✧ {match.label}</b><span>{match.criteria}টি মানদণ্ডের ভিত্তিতে</span></div>
+      <div className="perfect"><b>{match.perfect}</b>পারফেক্ট</div>
+    </div>
+    <div className="avatar">
+      <span className="type">{p.who}</span><span className="views"><Ic d={I.eye} s={15} c={C.ink} /> {p.views}</span>
+      <span className="avatar-icon"><Ic d={p.who === "পাত্রী" ? I.moon : I.star} s={42} c="rgba(255,255,255,.55)" /></span>
+      <span className="bio-no">বায়ো নং — {p.id.replace("NN-", "")} {p.verified && <span className="verified-badge" title="বারাকাহ ভেরিফায়েড">✓</span>}</span>
+    </div>
+    <div className="body">
+      <div className="match-facts"><span>{p.age} বছর</span><span><Ic d={I.briefcase} s={14} c={C.ink} /> {p.job}</span><span><Ic d={I.heart} s={14} c={C.ink} /> {p.marital}</span><span><Ic d={I.pin} s={14} c={C.ink} /> {p.dist}</span></div>
+      <button className="btn full-bio" onClick={() => go("profile", p)}>সম্পূর্ণ বায়ো দেখুন</button>
+    </div>
+  </div>
+) : (
   <div className="pcard" onClick={() => go("profile", p)}>
     <div className="avatar">
       <Ic d={p.who === "পাত্রী" ? I.moon : I.star} s={44} c="rgba(255,255,255,.35)" />
@@ -383,10 +430,11 @@ const PlanCard = ({ p, go }) => (
   <div className={"plan" + (p.feat ? " feat" : "")}>
     {p.feat && <span className="ribbon">জনপ্রিয়</span>}
     <span className="tag">{p.tag}</span>
+    {p.meaning && <div style={{ fontSize: 13, color: p.feat ? "rgba(255,255,255,.72)" : C.muted, marginTop: 7, lineHeight: 1.45 }}>{p.meaning}</div>}
     <div className="price serif">{p.price}</div>
     <div className="per">{p.per}</div>
     <ul>{p.items.map((it) => (<li key={it}><Ic d={I.check} s={17} c={p.feat ? C.goldSoft : C.green600} /> <span>{it}</span></li>))}</ul>
-    <button className={"btn " + (p.feat ? "btn-gold" : "btn-green")} onClick={() => p.id === "free" ? go("register") : go("checkout", { plan: p })}>{p.cta}</button>
+    <button className={"btn " + (p.feat ? "btn-gold" : "btn-green")} onClick={() => p.id === "free" ? go("register") : p.id === "barakah" ? go("barakah") : go("checkout", { plan: p })}>{p.cta}</button>
   </div>
 );
 
@@ -493,9 +541,19 @@ function Home({ go, fire }) {
         ].map((v, i) => (<div className="val" key={i}><div className="ic"><Ic d={v.ic} c={C.goldSoft} /></div><div><h3>{v.t}</h3><p>{v.d}</p></div></div>))}</div>
       </div></section>
 
+      <section className="block"><div className="wrap">
+        <div className="ctaband">
+          <div style={{ display: "inline-flex", marginBottom: 14 }}><Ic d={I.users} s={40} c={C.goldSoft} /></div>
+          <span className="tag" style={{ color: C.goldSoft, letterSpacing: 1.5, textTransform: "uppercase", fontSize: 11, fontWeight: 700 }}>সহায়ক ম্যাচমেকিং সেবা</span>
+          <h2 className="serif">নিজে খুঁজতে সময় নেই? আমাদের উপদেষ্টা খুঁজে দেবেন</h2>
+          <p>একজন অভিজ্ঞ ম্যাচমেকিং উপদেষ্টা আপনাকে বুঝে, হাজারো প্রোফাইল থেকে উপযুক্ত ম্যাচ বাছাই করে, আপনার হয়ে যোগাযোগ ও সাক্ষাৎ পর্যন্ত সব সামলান — ব্যক্তিগত ছোঁয়ায়।</p>
+          <button className="btn btn-gold btn-lg" onClick={() => go("assisted")}>সহায়ক সেবা সম্পর্কে জানুন</button>
+        </div>
+      </div></section>
+
       <section className="block" id="plans" style={{ background: "#EFEADD" }}><div className="wrap">
         <div className="head"><div className="kicker">সদস্যপদ</div><h2 className="serif">আপনার জন্য উপযুক্ত প্যাকেজ</h2><p>বিনামূল্যে শুরু করুন, প্রয়োজনে আপগ্রেড করুন। (মূল্য ডেমো)</p></div>
-        <div className="plans">{PLANS.map((p) => (<PlanCard key={p.id} p={p} go={go} />))}</div>
+        <div className="plans">{[...PLANS, BARAKAH_PLAN].map((p) => (<PlanCard key={p.id} p={p} go={go} />))}</div>
       </div></section>
 
       <section className="block" id="stories"><div className="wrap">
@@ -559,6 +617,13 @@ function Browse({ go, prefs }) {
       (age === "১৮-২৪" && p.age <= 24) ||
       (age === "২৫-৩০" && p.age >= 25 && p.age <= 30) ||
       (age === "৩১+" && p.age >= 31)));
+  const matchFor = (p) => {
+    const chosen = [who !== "সব", dist !== "সব", age !== "সব", deen !== "সব", Boolean(upazilaId || thanaId || unionId || village)].filter(Boolean).length;
+    const seed = Number(p.id.replace(/\D/g, "")) % 9;
+    const score = Math.min(98, 84 + chosen * 2 + seed);
+    const perfect = Math.min(7, 3 + chosen + (seed > 4 ? 1 : 0));
+    return { score, perfect, criteria: 7, label: score >= 93 ? "চমৎকার ম্যাচ" : score >= 88 ? "খুব ভালো ম্যাচ" : "ভালো ম্যাচ" };
+  };
   return (
     <>
       <div className="pagehead"><div className="wrap">
@@ -584,7 +649,7 @@ function Browse({ go, prefs }) {
           <div>
             <div className="result-meta"><span><b>{list.length}</b> টি প্রোফাইল পাওয়া গেছে</span><button className="btn btn-gold" onClick={() => go("register")}>বায়োডাটা তৈরি করুন</button></div>
             {list.length ? (
-              <div className="grid3">{list.map((p) => <PCard key={p.id} p={p} go={go} />)}</div>
+              <div className="grid3">{list.map((p) => <PCard key={p.id} p={p} go={go} match={matchFor(p)} />)}</div>
             ) : (
               <div className="empty"><Ic d={I.search} s={40} c={C.muted} /><p style={{ marginTop: 12 }}>এই ফিল্টারে কোনো প্রোফাইল পাওয়া যায়নি। ফিল্টার পরিবর্তন করুন।</p></div>
             )}
@@ -609,12 +674,13 @@ function ProfileDetail({ go, profile, fire }) {
           <div className="pd-card">
             <div className="ava"><Ic d={p.who === "পাত্রী" ? I.moon : I.star} s={64} c="rgba(255,255,255,.35)" /></div>
             <div className="meta">
-              <div className="pid">{p.who} · #{p.id}</div>
+              <div className="pid">{p.who} · #{p.id} {p.verified && <span className="verified-badge" title="বারাকাহ ভেরিফায়েড">✓</span>}</div>
               <h2 className="serif">{p.age} বছর</h2>
               <div className="mini"><Ic d={I.pin} s={15} c={C.muted} /> {p.dist}, {p.area}</div>
               <div className="mini"><Ic d={I.briefcase} s={15} c={C.muted} /> {p.job}</div>
               <div className="mini"><Ic d={I.book} s={15} c={C.muted} /> {p.edu}</div>
               <span className="deen" style={{ display: "inline-block", marginTop: 8, fontSize: 12, background: "rgba(201,162,39,.14)", color: "#8a6d12", padding: "4px 10px", borderRadius: 999 }}>{p.deen}</span>
+              {p.verified && <div className="guard" style={{ marginTop: 12, fontSize: 12 }}><span className="verified-badge">✓</span><span>বারাকাহ ভেরিফায়েড প্রোফাইল</span></div>}
               <button className="btn btn-gold" style={{ width: "100%", marginTop: 16 }} onClick={() => go("interest", { profile: p })}>আগ্রহ প্রকাশ করুন</button>
               <button className="btn btn-ghost" style={{ width: "100%", marginTop: 10 }} onClick={() => go("browse")}><Ic d={I.back} s={16} c={C.green900} /> ফিরে যান</button>
             </div>
@@ -794,7 +860,12 @@ function MembershipPage({ go }) {
     <>
       <PageHead go={go} title="সদস্যপদ" desc="আপনার প্রয়োজন অনুযায়ী প্যাকেজ বেছে নিন। ফ্রি প্রোফাইল তৈরি থেকে শুরু করে ভিআইপি ম্যাচমেকিং পর্যন্ত।" />
       <section className="block"><div className="wrap">
-        <div className="plans">{PLANS.map((p) => <PlanCard key={p.id} p={p} go={go} />)}</div>
+        <div className="plans">{[...PLANS, BARAKAH_PLAN].map((p) => <PlanCard key={p.id} p={p} go={go} />)}</div>
+        <div className="info-card" style={{ marginTop: 22, borderColor: "rgba(22,137,229,.3)" }}>
+          <h3><span className="verified-badge">✓</span> বারাকাহ ব্লু ব্যাজ</h3>
+          <p style={{ color: C.muted, marginBottom: 16 }}>সাধারণ সদস্যপদের বাইরে এককালীন অতিরিক্ত পেমেন্টে প্রোফাইল যাচাই, ব্লু ব্যাজ এবং সার্চে অগ্রাধিকার নিন।</p>
+          <button className="btn btn-green" onClick={() => go("barakah")}>বিস্তারিত দেখুন</button>
+        </div>
         <div className="info-card" style={{ marginTop: 22 }}>
           <h3><Ic d={I.shield} s={18} /> সদস্যপদে যা পাবেন</h3>
           <ul>
@@ -803,6 +874,34 @@ function MembershipPage({ go }) {
             <li>নিরাপত্তা রিপোর্টিং ও সহায়তা</li>
             <li>প্রোফাইল হাইলাইট ও ম্যাচ সাজেশন</li>
           </ul>
+        </div>
+      </div></section>
+    </>
+  );
+}
+
+function BarakahPage({ go }) {
+  return (
+    <>
+      <PageHead go={go} title="বারাকাহ ব্লু ব্যাজ" desc="আরও আস্থার সঙ্গে আপনার বায়োডাটা উপস্থাপন করুন।" />
+      <section className="block"><div className="wrap">
+        <div className="barakah-hero">
+          <div>
+            <span className="eyebrow"><span className="verified-badge">✓</span> প্রিমিয়াম ভেরিফিকেশন সেবা</span>
+            <h2 className="serif" style={{ fontSize: 34, color: C.green900, marginTop: 16 }}>ব্লু ব্যাজে আপনার প্রোফাইল হবে আরও বিশ্বাসযোগ্য</h2>
+            <p style={{ color: C.muted }}>আমাদের টিম তথ্য ও অভিভাবকের যোগাযোগ যাচাই করার পর যোগ্য প্রোফাইলে বারাকাহ ব্লু ব্যাজ দেবে। এটি সদস্যপদ থেকে আলাদা একটি ঐচ্ছিক সেবা।</p>
+            <ul className="barakah-list">
+              {BARAKAH_PLAN.items.map((item) => <li key={item}><Ic d={I.check} s={18} c="#1689e5" /> <span>{item}</span></li>)}
+            </ul>
+            <div className="guard"><Ic d={I.shield} s={20} c="#1689e5" /><span>পেমেন্ট করলেই ব্যাজ নিশ্চিত নয়—ম্যানুয়াল যাচাই সফল হলে ব্যাজ সক্রিয় হবে। যাচাই ব্যর্থ হলে আবেদনটি রিভিউ করা হবে।</span></div>
+          </div>
+          <div className="barakah-price">
+            <span className="verified-badge" style={{ width: 42, height: 42, fontSize: 24 }}>✓</span>
+            <h3 style={{ marginTop: 12 }}>বারাকাহ ভেরিফায়েড</h3>
+            <div className="price serif" style={{ fontSize: 40, color: C.green900, margin: "8px 0" }}>{BARAKAH_PLAN.price}</div>
+            <p style={{ color: C.muted, fontSize: 13, marginBottom: 20 }}>{BARAKAH_PLAN.per}</p>
+            <button className="btn btn-gold" style={{ width: "100%" }} onClick={() => go("checkout", { plan: BARAKAH_PLAN })}>ব্লু ব্যাজের জন্য আবেদন করুন</button>
+          </div>
         </div>
       </div></section>
     </>
@@ -821,6 +920,88 @@ function StoriesPage({ go }) {
           <button className="btn btn-gold" onClick={() => go("register")}>বায়োডাটা তৈরি করুন</button>
         </div>
       </div></section>
+    </>
+  );
+}
+
+/* ---------- ASSISTED MATCHMAKING SERVICE ---------- */
+function AssistedPage({ go, fire }) {
+  const [done, setDone] = useState(false);
+  const [ref] = useState(() => "AMS-" + Math.floor(10000 + Math.random() * 90000));
+  const [form, setForm] = useState({ name: "", contact: "", looking: "পাত্রী", prefs: "" });
+  const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
+  const submit = () => {
+    if (!form.name || !form.contact) { fire("নাম ও যোগাযোগ নম্বর দিন"); return; }
+    setDone(true); window.scrollTo(0, 0);
+  };
+  const pillars = [
+    { ic: I.users, t: "নিবেদিত ম্যাচমেকিং উপদেষ্টা", d: "একজন অভিজ্ঞ উপদেষ্টা আপনাকে বুঝে, ব্যক্তিগত পরামর্শের মাধ্যমে আপনার জীবনসঙ্গী অনুসন্ধানে পাশে থাকেন — শুরু থেকে শেষ পর্যন্ত।" },
+    { ic: I.star, t: "বাছাইকৃত প্রস্তাব", d: "হাজারো যাচাইকৃত প্রোফাইল থেকে আপনার চাহিদা অনুযায়ী উপযুক্ত ম্যাচ হাতে বাছাই করা হয়; আপনার অনুমোদন নিয়ে বিষয়টি এগিয়ে নেওয়া হয়।" },
+    { ic: I.chat, t: "দ্রুত সাড়া", d: "আপনার পক্ষ থেকে প্রস্তাবিত পরিবারের সাথে যোগাযোগ করা হয়, আপনার প্রোফাইল সুন্দরভাবে উপস্থাপন করা হয় এবং ফলোআপের মাধ্যমে সাড়া নিশ্চিত করা হয়।" },
+    { ic: I.ring, t: "পরিচয় ও সাক্ষাৎ", d: "পারস্পরিক পছন্দের ম্যাচের মধ্যে অভিভাবক-সম্পৃক্ত সাক্ষাতের আয়োজন করা হয় এবং উভয় পক্ষের যোগাযোগ সহজ করা হয়।" },
+  ];
+  const steps = [
+    { ic: I.doc, t: "চাহিদা বুঝে নেওয়া", d: "উপদেষ্টা আপনার পছন্দ, দ্বীনি অগ্রাধিকার ও পারিবারিক প্রত্যাশা বিস্তারিত বুঝে নেন।" },
+    { ic: I.star, t: "প্রোফাইল বাছাই", d: "হাজারো প্রোফাইল থেকে হাতে বাছাই করা উপযুক্ত ম্যাচ আপনাকে দেখানো হয় ও অনুমোদন নেওয়া হয়।" },
+    { ic: I.chat, t: "যোগাযোগ ও ফলোআপ", d: "আপনার হয়ে প্রস্তাবিত পরিবারের সাথে যোগাযোগ ও নিয়মিত ফলোআপ করা হয়।" },
+    { ic: I.ring, t: "সাক্ষাৎ আয়োজন", d: "পারস্পরিক সম্মতিতে পর্দা ও আদব রক্ষা করে সাক্ষাতের ব্যবস্থা করা হয়।" },
+  ];
+  if (done) return (
+    <>
+      <PageHead go={go} title="অনুরোধ গ্রহণ করা হয়েছে" desc="আমাদের ম্যাচমেকিং উপদেষ্টা শীঘ্রই আপনার সাথে যোগাযোগ করবেন।" />
+      <section className="block"><div className="wrap"><div className="success">
+        <div className="badge"><Ic d={I.check} s={36} c={C.green600} sw={2.2} /></div>
+        <h2 className="serif">জাযাকাল্লাহ! অনুরোধ জমা হয়েছে</h2>
+        <p>আপনার সেবা অনুরোধ রেফারেন্স নম্বর:</p>
+        <div className="pid">{ref}</div>
+        <p style={{ marginBottom: 20 }}>একজন নিবেদিত উপদেষ্টা আপনার চাহিদা বুঝে বাছাইকৃত প্রস্তাব নিয়ে যোগাযোগ করবেন। (এটি একটি ডেমো — তথ্য সংরক্ষণ হয়নি।)</p>
+        <div className="actionbar" style={{ justifyContent: "center" }}>
+          <button className="btn btn-gold" onClick={() => go("browse")}>প্রোফাইল দেখুন</button>
+          <button className="btn btn-ghost" onClick={() => go("home")}>হোমে ফিরুন</button>
+        </div>
+      </div></div></section>
+    </>
+  );
+  return (
+    <>
+      <PageHead go={go} title="সহায়ক ম্যাচমেকিং সেবা" desc="আমাদের অভিজ্ঞ ম্যাচমেকিং উপদেষ্টা আপনার হয়ে উপযুক্ত জীবনসঙ্গী খুঁজে দেন — ব্যক্তিগত পরামর্শ, বাছাইকৃত প্রস্তাব ও ব্যক্তিগত ছোঁয়ায়।" />
+      <section className="block"><div className="wrap">
+        <div className="head"><div className="kicker">প্রিমিয়াম সেবা</div><h2 className="serif">আপনার হয়ে খুঁজে দেন আমাদের উপদেষ্টা</h2><p>নিজে খোঁজার সময় নেই? একজন নিবেদিত উপদেষ্টাকে দায়িত্ব দিন — তিনি আপনাকে বুঝে, উপযুক্ত ম্যাচ বেছে, যোগাযোগ ও সাক্ষাৎ পর্যন্ত সব সামলান।</p></div>
+        <div className="content-grid">{pillars.map((v) => (
+          <div className="info-card" key={v.t}><h3><Ic d={v.ic} s={18} /> {v.t}</h3><p>{v.d}</p></div>
+        ))}</div>
+      </div></section>
+
+      <section className="block" style={{ background: "#EFEADD", paddingTop: 60 }}><div className="wrap">
+        <div className="head"><div className="kicker">কীভাবে কাজ করে</div><h2 className="serif">মাত্র চারটি ধাপে</h2><p>স্বচ্ছ, শরীয়াহসম্মত ও অভিভাবক-সম্পৃক্ত একটি প্রক্রিয়া।</p></div>
+        <div className="steps">{steps.map((s, i) => (
+          <div className="step" key={i}><div className="n serif">০{i + 1}</div><div className="ic"><Ic d={s.ic} /></div><h3>{s.t}</h3><p>{s.d}</p></div>
+        ))}</div>
+      </div></section>
+
+      <section className="block"><div className="wrap"><div className="contact-panel content-page">
+        <div className="info-card">
+          <h3><Ic d={I.shield} s={18} /> এই সেবায় যা পাবেন</h3>
+          <ul>
+            <li>আপনাকে বুঝে ব্যক্তিগত পরামর্শ ও ব্যক্তিগত ছোঁয়া</li>
+            <li>হাজারো প্রোফাইল থেকে হাতে বাছাই করা উপযুক্ত ম্যাচ</li>
+            <li>আপনার হয়ে যোগাযোগ ও নিয়মিত ফলোআপ</li>
+            <li>পারস্পরিক ম্যাচের সাথে সাক্ষাৎ ও যোগাযোগ সহজীকরণ</li>
+            <li>প্রতিটি ধাপে আপনার অনুমোদন ও অভিভাবকের সম্পৃক্ততা</li>
+          </ul>
+          <div className="guard" style={{ marginTop: 18 }}><Ic d={I.moon} s={20} c={C.gold} /> <span>সহায়ক ম্যাচমেকিং সেবা ভিআইপি সদস্যপদের অন্তর্ভুক্ত। <a style={{ color: C.green700, fontWeight: 600 }} onClick={() => go("membership")}>প্যাকেজ দেখুন</a></span></div>
+        </div>
+        <div className="formcard" style={{ marginBottom: 0 }}>
+          <h3><Ic d={I.users} s={18} /> উপদেষ্টার জন্য অনুরোধ করুন</h3>
+          <div className="frow">
+            <div className="fgroup"><label>নাম *</label><input value={form.name} onChange={set("name")} placeholder="আপনার নাম" /></div>
+            <div className="fgroup"><label>মোবাইল / প্রোফাইল আইডি *</label><input value={form.contact} onChange={set("contact")} placeholder="01XXXXXXXXX বা NN-XXXX" /></div>
+            <div className="fgroup"><label>কী খুঁজছেন</label><select value={form.looking} onChange={set("looking")}><option>পাত্রী</option><option>পাত্র</option></select></div>
+            <div className="fgroup full"><label>আপনার পছন্দ ও প্রত্যাশা</label><textarea value={form.prefs} onChange={set("prefs")} placeholder="বয়স, এলাকা, দ্বীনদারিতা, শিক্ষা ও পারিবারিক প্রত্যাশা সংক্ষেপে লিখুন" /></div>
+          </div>
+          <button className="btn btn-gold" onClick={submit}>উপদেষ্টার জন্য অনুরোধ করুন</button>
+        </div>
+      </div></div></section>
     </>
   );
 }
@@ -1114,6 +1295,8 @@ export default function NoorNikah() {
       {page === "register" && <Register go={go} fire={fire} />}
       {page === "login" && <Login go={go} fire={fire} />}
       {page === "membership" && <MembershipPage go={go} />}
+      {page === "barakah" && <BarakahPage go={go} />}
+      {page === "assisted" && <AssistedPage go={go} fire={fire} />}
       {page === "stories" && <StoriesPage go={go} />}
       {page === "checkout" && <CheckoutPage go={go} plan={data?.plan} fire={fire} />}
       {page === "interest" && <InterestPage go={go} profile={data?.profile} fire={fire} />}
