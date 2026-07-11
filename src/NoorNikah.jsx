@@ -120,7 +120,7 @@ body{top:0!important;}
 .nn .match-card .avatar{height:142px;background:linear-gradient(160deg,#fff 0 36%,#f7f4fa);}
 .nn .match-card .avatar .type,.nn .match-card .avatar .views{position:absolute;top:12px;background:#fff;border:1px solid ${C.line};box-shadow:0 5px 14px rgba(20,30,26,.1);border-radius:999px;padding:7px 13px;font-size:12px;display:flex;align-items:center;gap:6px;}
 .nn .match-card .avatar .type{left:12px}.nn .match-card .avatar .views{right:12px}
-.nn .match-card .avatar-icon{width:72px;height:72px;border-radius:50%;background:${C.green900};display:grid;place-items:center;margin-top:20px;}
+.nn .match-card .avatar-icon{width:96px;height:96px;border-radius:50%;background:${C.green900};display:grid;place-items:center;margin-top:18px;}
 .nn .match-card .bio-no{position:absolute;bottom:-16px;background:#fff;border:1px solid ${C.line};border-radius:999px;padding:8px 20px;box-shadow:0 6px 13px rgba(220,80,220,.2);font-size:13px;color:${C.ink};}
 .nn .verified-badge{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#1689e5;color:#fff;font-size:12px;font-weight:800;vertical-align:middle;box-shadow:0 2px 7px rgba(22,137,229,.3);}
 .nn .barakah-hero{background:linear-gradient(135deg,#eaf6ff,#f5fbf8);border:1px solid rgba(22,137,229,.18);border-radius:24px;padding:42px;display:grid;grid-template-columns:1.2fr .8fr;gap:30px;align-items:center;}
@@ -307,12 +307,59 @@ const I = {
   check: <path d="M5 13l4 4L19 7" />,
   star: <path d="M12 3l2.6 5.6 6.4.8-4.7 4.3 1.2 6.3L12 17.8 6.5 20l1.2-6.3L3 9.4l6.4-.8L12 3z" />,
   moon: <path d="M20 14.5A8 8 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5z" />,
+  groom: <><path d="M8.5 6.2h7l-1.2-2.7h-4.6L8.5 6.2z" /><circle cx="12" cy="9.2" r="3.1" /><path d="M9.7 12.5c.4 1.6 1.2 2.5 2.3 2.5s1.9-.9 2.3-2.5M5.5 21v-1.8c0-3.4 2.9-5.7 6.5-5.7s6.5 2.3 6.5 5.7V21M9 17.2l3 3 3-3" /></>,
+  bride: <><path d="M8.2 10.5C8.2 6.5 9.7 3 12 3s3.8 3.5 3.8 7.5" /><circle cx="12" cy="9.2" r="3" /><path d="M8.7 11.2c-1.7 1.7-2.7 4.5-2.7 8.8h12c0-4.3-1-7.1-2.7-8.8M9.2 13.3c.4 1.5 1.4 2.4 2.8 2.4s2.4-.9 2.8-2.4M9.5 20v-2.8M14.5 20v-2.8" /></>,
   pin: <><path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></>,
   back: <path d="M15 5l-7 7 7 7" />,
   book: <><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z" /><path d="M19 3v18" /></>,
   briefcase: <><rect x="3" y="8" width="18" height="12" rx="2" /><path d="M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></>,
   home: <><path d="M4 11l8-7 8 7" /><path d="M6 10v9h12v-9" /></>,
 };
+
+const GroomAvatar = ({ s = 64 }) => (
+  <svg width={s} height={s} viewBox="0 0 64 64" role="img" aria-label="পাত্রের গোপন প্রোফাইল">
+    <defs><clipPath id="groom-avatar"><circle cx="32" cy="32" r="30" /></clipPath></defs>
+    <circle cx="32" cy="32" r="30" fill="#eeeef0" />
+    <g clipPath="url(#groom-avatar)">
+      <path d="M4 61c2-16 12-24 28-24s26 8 28 24" fill="#710078" />
+      <path d="M19 64V46c3 4 7 6 13 6s10-2 13-6v18" fill="#d7d7d9" />
+      <path d="M21 19c0-8 4-13 11-13s11 5 11 13v10c0 8-5 14-11 14S21 37 21 29V19z" fill="#d8bda2" />
+      <path d="M20 24c2 3 4 4 6 4h12c2 0 4-1 6-4v8c-2 10-7 15-12 15s-10-5-12-15v-8z" fill="#1d1d1f" />
+      <path d="M25 29c1.5 1.2 3.8 1.8 7 1.8s5.5-.6 7-1.8v-8H25v8z" fill="#d8bda2" />
+      <path d="M19 17c2-7 6-11 13-11s11 4 13 11c-8-3-18-3-26 0z" fill="#fafafa" stroke="#d8d8dc" strokeWidth="1" />
+      <path d="M21 18c7-2 15-2 22 0" fill="none" stroke="#cfcfd3" strokeWidth="1" />
+    </g>
+    <circle cx="32" cy="32" r="30" fill="none" stroke="rgba(255,255,255,.55)" strokeWidth="2" />
+  </svg>
+);
+
+const BrideAvatar = ({ s = 64 }) => (
+  <svg width={s} height={s} viewBox="0 0 64 64" role="img" aria-label="পাত্রীর গোপন প্রোফাইল">
+    <defs>
+      <clipPath id="bride-avatar"><circle cx="32" cy="32" r="30" /></clipPath>
+      <linearGradient id="bride-bg" x1="8" y1="5" x2="54" y2="59" gradientUnits="userSpaceOnUse"><stop stopColor="#211b3c" /><stop offset="1" stopColor="#0e0d1b" /></linearGradient>
+      <linearGradient id="bride-veil" x1="23" y1="15" x2="45" y2="61" gradientUnits="userSpaceOnUse"><stop stopColor="#29292b" /><stop offset=".55" stopColor="#111113" /><stop offset="1" stopColor="#303033" /></linearGradient>
+    </defs>
+    <circle cx="32" cy="32" r="30" fill="url(#bride-bg)" />
+    <g clipPath="url(#bride-avatar)">
+      <path d="M12 66c4-10 8-20 10-34 1-11 4-17 10-17s9 6 10 17c2 14 6 24 10 34H12z" fill="url(#bride-veil)" />
+      <path d="M21 34c0-12 3-20 11-20s11 8 11 20" fill="none" stroke="#08080a" strokeWidth="5" />
+      <path d="M22 27c2-7 5-10 10-10s8 3 10 10c-7-3-13-3-20 0z" fill="#18181a" stroke="#3b3b3d" strokeWidth="1" />
+      <path d="M22.5 27.5c6-2.2 13-2.2 19 0v12c-6 2.5-13 2.5-19 0v-12z" fill="#050506" />
+      <path d="M23.8 28.8c5.3-1.6 11.1-1.6 16.4 0v5.8c-5.3 1.4-11.1 1.4-16.4 0v-5.8z" fill="#c99572" />
+      <path d="M25 29.8c1.5-.8 3.3-.9 5.1-.1M33.9 29.7c1.8-.8 3.6-.7 5.1.1" fill="none" stroke="#3a2721" strokeWidth=".9" strokeLinecap="round" />
+      <path d="M25.3 32c1.3-1.2 3.2-1.2 4.5 0-1.3 1.2-3.2 1.2-4.5 0zM34.2 32c1.3-1.2 3.2-1.2 4.5 0-1.3 1.2-3.2 1.2-4.5 0z" fill="#f7f3ee" stroke="#171719" strokeWidth=".55" />
+      <circle cx="27.55" cy="32" r=".85" fill="#2a1d18" /><circle cx="36.45" cy="32" r=".85" fill="#2a1d18" />
+      <circle cx="27.3" cy="31.75" r=".2" fill="#fff" /><circle cx="36.2" cy="31.75" r=".2" fill="#fff" />
+      <path d="M23 35c5.8-1.5 12.2-1.5 18 0v7c-6 2-12 2-18 0v-7z" fill="#050506" />
+      <path d="M20 43c4 3 8 4.5 12 4.5S40 46 44 43M18 53c5 3 9.7 4.5 14 4.5S41 56 46 53" fill="none" stroke="#3a3a3d" strokeWidth="1" opacity=".55" />
+    </g>
+    <circle cx="32" cy="32" r="30" fill="none" stroke="rgba(255,255,255,.72)" strokeWidth="2" />
+  </svg>
+);
+
+const ProfileAvatar = ({ p, s = 64, color = "rgba(255,255,255,.55)", sw = 1.5 }) =>
+  p.who === "পাত্রী" ? <BrideAvatar s={s} /> : <GroomAvatar s={s} />;
 
 const Logo = (
   <svg className="mark" viewBox="0 0 48 48" fill="none">
@@ -459,7 +506,7 @@ const PCard = ({ p, go, match }) => match ? (
     </div>
     <div className="avatar">
       <span className="type">{p.who}</span><span className="views"><Ic d={I.eye} s={15} c={C.ink} /> {p.views}</span>
-      <span className="avatar-icon"><Ic d={p.who === "পাত্রী" ? I.moon : I.star} s={42} c="rgba(255,255,255,.55)" /></span>
+      <span className="avatar-icon"><ProfileAvatar p={p} s={88} color="rgba(255,255,255,.72)" /></span>
       <span className="bio-no">বায়ো নং — {p.id.replace("NN-", "")} {p.verified && <span className="verified-badge" title="বারাকাহ ভেরিফায়েড">✓</span>}</span>
     </div>
     <div className="body">
@@ -470,7 +517,7 @@ const PCard = ({ p, go, match }) => match ? (
 ) : (
   <div className="pcard" onClick={() => go("profile", p)}>
     <div className="avatar">
-      <Ic d={p.who === "পাত্রী" ? I.moon : I.star} s={44} c="rgba(255,255,255,.35)" />
+      <ProfileAvatar p={p} s={116} color="rgba(255,255,255,.48)" sw={1.35} />
       <span className="priv"><Ic d={I.lock} s={12} c="#fff" /> গোপন</span>
     </div>
     <div className="body">
@@ -731,7 +778,7 @@ function ProfileDetail({ go, profile, fire }) {
       <section style={{ paddingBottom: 70 }}><div className="wrap">
         <div className="pd">
           <div className="pd-card">
-            <div className="ava"><Ic d={p.who === "পাত্রী" ? I.moon : I.star} s={64} c="rgba(255,255,255,.35)" /></div>
+            <div className="ava"><ProfileAvatar p={p} s={122} color="rgba(255,255,255,.52)" sw={1.3} /></div>
             <div className="meta">
               <div className="pid">{p.who} · #{p.id} {p.verified && <span className="verified-badge" title="বারাকাহ ভেরিফায়েড">✓</span>}</div>
               <h2 className="serif">{p.age} বছর</h2>
