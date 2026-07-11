@@ -109,14 +109,14 @@ body{top:0!important;}
 .nn .pcard .deen{margin-top:10px;display:inline-block;font-size:12px;background:rgba(201,162,39,.14);color:#8a6d12;padding:4px 10px;border-radius:999px;}
 .nn .match-card{cursor:default;border-radius:20px;box-shadow:0 12px 32px -24px rgba(11,61,46,.45);}
 .nn .match-card:hover{transform:translateY(-3px);}
-.nn .match-head{display:grid;grid-template-columns:62px 1fr auto;gap:12px;align-items:center;padding:14px;background:#f2faf7;border-bottom:1px solid ${C.line};}
+.nn .match-head{display:grid;grid-template-columns:62px minmax(0,1fr) auto;gap:12px;align-items:center;padding:14px;background:#f2faf7;border-bottom:1px solid ${C.line};}
 .nn .match-ring{width:60px;height:60px;border-radius:50%;display:grid;place-items:center;position:relative;background:conic-gradient(#12b886 calc(var(--score)*1%),#d8eee6 0);}
 .nn .match-ring:after{content:"";position:absolute;inset:6px;border-radius:50%;background:#f2faf7;}
 .nn .match-ring span{position:relative;z-index:1;font-size:20px;font-weight:700;color:#07956c;line-height:1;text-align:center;}
 .nn .match-ring small{display:block;font-size:8px;font-weight:500;color:${C.muted};margin-top:3px;}
 .nn .match-title b{display:block;color:${C.green900};font-size:16px;}
 .nn .match-title span{font-size:12px;color:${C.muted};}
-.nn .perfect{text-align:center;color:${C.muted};font-size:11px;}.nn .perfect b{display:block;color:#07956c;font-size:19px;}
+.nn .match-quality{display:flex;gap:10px;align-items:center;}.nn .quality{text-align:center;color:${C.muted};font-size:10px;line-height:1.2;}.nn .quality b{display:block;color:#07956c;font-size:19px;margin-bottom:2px;}.nn .quality.good b{color:${C.green700};}
 .nn .match-card .avatar{height:142px;background:linear-gradient(160deg,#fff 0 36%,#f7f4fa);}
 .nn .match-card .avatar .type,.nn .match-card .avatar .views{position:absolute;top:12px;background:#fff;border:1px solid ${C.line};box-shadow:0 5px 14px rgba(20,30,26,.1);border-radius:999px;padding:7px 13px;font-size:12px;display:flex;align-items:center;gap:6px;}
 .nn .match-card .avatar .type{left:12px}.nn .match-card .avatar .views{right:12px}
@@ -455,7 +455,7 @@ const PCard = ({ p, go, match }) => match ? (
     <div className="match-head">
       <div className="match-ring" style={{ "--score": match.score }}><span>{match.score}<small>ম্যাচ</small></span></div>
       <div className="match-title"><b>✧ {match.label}</b><span>{match.criteria}টি মানদণ্ডের ভিত্তিতে</span></div>
-      <div className="perfect"><b>{match.perfect}</b>পারফেক্ট</div>
+      <div className="match-quality"><div className="quality"><b>{match.perfect}</b>পারফেক্ট</div><div className="quality good"><b>{match.good}</b>ভালো</div></div>
     </div>
     <div className="avatar">
       <span className="type">{p.who}</span><span className="views"><Ic d={I.eye} s={15} c={C.ink} /> {p.views}</span>
@@ -463,7 +463,7 @@ const PCard = ({ p, go, match }) => match ? (
       <span className="bio-no">বায়ো নং — {p.id.replace("NN-", "")} {p.verified && <span className="verified-badge" title="বারাকাহ ভেরিফায়েড">✓</span>}</span>
     </div>
     <div className="body">
-      <div className="match-facts"><span>{p.age} বছর</span><span><Ic d={I.briefcase} s={14} c={C.ink} /> {p.job}</span><span><Ic d={I.heart} s={14} c={C.ink} /> {p.marital}</span><span><Ic d={I.pin} s={14} c={C.ink} /> {p.dist}</span></div>
+      <div className="match-facts"><span>◷ {(new Date().getFullYear() - p.age).toLocaleString("bn-BD", { useGrouping: false })}</span><span><Ic d={I.briefcase} s={14} c={C.ink} /> {p.job}</span><span><Ic d={I.heart} s={14} c={C.ink} /> {p.marital}</span><span><Ic d={I.pin} s={14} c={C.ink} /> {p.dist}</span></div>
       <button className="btn full-bio" onClick={() => go("profile", p)}>সম্পূর্ণ বায়ো দেখুন</button>
     </div>
   </div>
@@ -678,8 +678,10 @@ function Browse({ go, prefs }) {
     const chosen = [who !== "সব", dist !== "সব", age !== "সব", deen !== "সব", Boolean(upazilaId || thanaId || unionId || village)].filter(Boolean).length;
     const seed = Number(p.id.replace(/\D/g, "")) % 9;
     const score = Math.min(98, 84 + chosen * 2 + seed);
-    const perfect = Math.min(7, 3 + chosen + (seed > 4 ? 1 : 0));
-    return { score, perfect, criteria: 7, label: score >= 93 ? "চমৎকার ম্যাচ" : score >= 88 ? "খুব ভালো ম্যাচ" : "ভালো ম্যাচ" };
+    const perfect = Math.min(6, 3 + chosen + (seed > 4 ? 1 : 0));
+    const criteria = 7;
+    const good = criteria - perfect;
+    return { score, perfect, good, criteria, label: score >= 93 ? "চমৎকার ম্যাচ" : score >= 88 ? "খুব ভালো ম্যাচ" : "ভালো ম্যাচ" };
   };
   return (
     <>
