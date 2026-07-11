@@ -23,7 +23,7 @@ const C = {
 const styles = `
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;}
-.nn{font-family:'Hind Siliguri',system-ui,sans-serif;color:${C.ink};background:${C.cream};line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh;}
+.nn{font-family:'Hind Siliguri',system-ui,sans-serif;color:${C.ink};background:${C.cream};line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden;}
 .nn .serif{font-family:'Fraunces',Georgia,serif;}
 .nn .wrap{max-width:1180px;margin:0 auto;padding:0 22px;}
 .nn a{color:inherit;text-decoration:none;cursor:pointer;}
@@ -43,6 +43,12 @@ const styles = `
 .nn .navlinks a:hover{opacity:1;}
 .nn .navlinks a.active{color:${C.gold};opacity:1;font-weight:600;}
 .nn .nav-cta{display:flex;align-items:center;gap:14px;}
+.nn .language-switch{position:relative;display:flex;align-items:center;gap:6px;}
+.nn .language-switch select{appearance:none;background:#fff;border:1px solid ${C.line};border-radius:999px;padding:9px 30px 9px 12px;color:${C.green900};font:600 13px/1.2 inherit;cursor:pointer;max-width:112px;}
+.nn .language-switch:after{content:"⌄";position:absolute;right:11px;top:7px;color:${C.green700};pointer-events:none;}
+.nn #google_translate_element{position:absolute;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;}
+.nn .goog-te-banner-frame,.nn .goog-te-banner-frame.skiptranslate{display:none!important;}
+body{top:0!important;}
 .nn .btn{border-radius:999px;font-weight:600;font-size:15px;padding:11px 22px;transition:transform .15s,background .2s;display:inline-flex;gap:8px;align-items:center;justify-content:center;}
 .nn .btn:hover{transform:translateY(-1px);}
 .nn .btn-gold{background:${C.gold};color:${C.green900};box-shadow:0 6px 18px rgba(201,162,39,.3);}
@@ -247,7 +253,8 @@ const styles = `
 
 @media(max-width:900px){
   .nn .navlinks,.nn .nav-cta .btn-ghost{display:none;}
-  .nn .hamburger{display:inline-flex;}
+  .nn .nav-cta>.btn-gold{display:none;}
+  .nn .nav-cta .hamburger{display:inline-flex;}
   .nn .fields{grid-template-columns:1fr 1fr;}
   .nn .steps,.nn .profiles,.nn .values,.nn .plans,.nn .stories,.nn .grid3,.nn .dashboard-grid{grid-template-columns:1fr 1fr;}
   .nn .stats .wrap{grid-template-columns:1fr 1fr;gap:28px;}
@@ -261,6 +268,24 @@ const styles = `
 }
 @media(max-width:560px){
   .nn .fields,.nn .steps,.nn .profiles,.nn .values,.nn .plans,.nn .stories,.nn .grid3,.nn .fgrid,.nn .frow,.nn .biorows,.nn .content-grid,.nn .contact-panel,.nn .dashboard-grid{grid-template-columns:1fr;}
+  .nn .announce{font-size:11.5px;padding:6px 10px;line-height:1.45;}
+  .nn .nav{height:62px;padding-left:14px;padding-right:14px;}
+  .nn .brand{gap:7px;min-width:0;}
+  .nn .brand .mark{width:32px;height:32px;}
+  .nn .brand .bn{font-size:18px;}
+  .nn .brand .en{font-size:8.5px;letter-spacing:2px;}
+  .nn .nav-cta{gap:7px;}
+  .nn .nav-cta>.btn-gold{display:none;}
+  .nn .hamburger{padding:8px 10px!important;}
+  .nn .hero{padding:38px 0 22px;}
+  .nn .hero-inner{padding-left:16px;padding-right:16px;}
+  .nn .hero-arch{top:-12px;width:560px;max-width:none;opacity:.7;}
+  .nn h1{font-size:34px;margin:16px 0 12px;}
+  .nn .lead{font-size:15.5px;line-height:1.65;}
+  .nn .search{padding:16px;margin-top:24px;border-radius:16px;}
+  .nn .seg{display:grid;grid-template-columns:1fr 1fr;width:100%;}
+  .nn .seg button{padding:8px 10px;}
+  .nn .trust{gap:12px 18px;margin-top:22px;}
 }
 @media(prefers-reduced-motion:reduce){.nn *{transition:none!important;}}
 `;
@@ -330,6 +355,37 @@ const ALL_DIVISIONS = getAllDivisions();
 const ALL_DISTRICTS = getAllDistricts();
 
 /* ---------- shared layout ---------- */
+function LanguageSwitcher() {
+  const languages = [
+    ["bn", "বাংলা"], ["en", "English"], ["ar", "العربية"], ["hi", "हिन्दी"],
+    ["ur", "اردو"], ["id", "Bahasa"], ["ms", "Melayu"], ["tr", "Türkçe"], ["fr", "Français"]
+  ];
+  const [language, setLanguage] = useState(() => localStorage.getItem("noornikah-language") || "bn");
+  useEffect(() => {
+    window.googleTranslateElementInit = () => {
+      if (window.google?.translate && !document.querySelector("#google_translate_element select")) {
+        new window.google.translate.TranslateElement({ pageLanguage: "bn", autoDisplay: false }, "google_translate_element");
+      }
+    };
+    if (window.google?.translate) window.googleTranslateElementInit();
+    else if (!document.getElementById("google-translate-script")) {
+      const script = document.createElement("script");
+      script.id = "google-translate-script";
+      script.src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  }, []);
+  const changeLanguage = (next) => {
+    setLanguage(next);
+    localStorage.setItem("noornikah-language", next);
+    const value = next === "bn" ? "/bn/bn" : `/bn/${next}`;
+    document.cookie = `googtrans=${value};path=/;max-age=31536000;SameSite=Lax`;
+    window.location.reload();
+  };
+  return <div className="language-switch notranslate"><span aria-hidden="true">🌐</span><select aria-label="ভাষা নির্বাচন" value={language} onChange={(e) => changeLanguage(e.target.value)}>{languages.map(([code, label]) => <option value={code} key={code}>{label}</option>)}</select><div id="google_translate_element" /></div>;
+}
+
 function Header({ page, go, fire }) {
   const [menu, setMenu] = useState(false);
   const link = (id, label) => (
@@ -351,6 +407,7 @@ function Header({ page, go, fire }) {
             <a className={page === "stories" ? "active" : ""} onClick={() => go("stories")}>সফলতার গল্প</a>
           </nav>
           <div className="nav-cta">
+            <LanguageSwitcher />
             <button className="btn btn-ghost" onClick={() => go("login")}>লগইন</button>
             <button className="btn btn-gold" onClick={() => go("register")}>বায়োডাটা তৈরি করুন</button>
             <button className="btn btn-ghost hamburger" style={{ padding: "10px 12px" }} aria-label="মেনু" onClick={() => setMenu(!menu)}>
