@@ -1,7 +1,20 @@
+# Dependencies
 node_modules
+
+# Build files
 dist
+dist-ssr
+
+# Log files
+*.log
+.dev-server.log
+.dev-server-error.log
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Local tooling and platform state
 .DS_Store
-*.local
-vite.log
-vite-error.log
 .vercel
