@@ -375,6 +375,60 @@ function shareUrlFor(profile) {
   return `${window.location.origin}/profile/${encodeURIComponent(profile.id)}?bio=${encodeSharedProfile(profile)}`;
 }
 
+export function buildPublicProfile(f, id) {
+  const rows = (...items) => items.filter(([, value]) => value !== undefined && value !== null && String(value).trim());
+  const sections = [
+    { title: "মৌলিক তথ্য", rows: rows(
+      ["লিঙ্গ", f.gender], ["বয়স", f.age && `${f.age} বছর`], ["জন্মসাল", f.birthYear],
+      ["উচ্চতা", f.height], ["ওজন", f.weight], ["রক্তের গ্রুপ", f.bloodGroup],
+      ["গায়ের রং", f.complexion], ["বৈবাহিক অবস্থা", f.marital], ["জাতীয়তা", f.nationality],
+    ) },
+    { title: "ঠিকানা", rows: rows(
+      ["জেলা", f.dist], ["উপজেলা", f.upazila], ["থানা", f.thana], ["ইউনিয়ন", f.union],
+      ["গ্রাম/এলাকা", f.village], ["বর্তমান ঠিকানা", f.currentAddress], ["বেড়ে ওঠা", f.grewUp],
+    ) },
+    { title: "শিক্ষা ও পেশা", rows: rows(
+      ["শিক্ষার মাধ্যম", f.educationMedium], ["শিক্ষাগত যোগ্যতা", f.edu], ["শিক্ষাপ্রতিষ্ঠান", f.institute],
+      ["দ্বীনি শিক্ষা", f.religiousStudy], ["পেশা", f.job],
+    ) },
+    { title: "দ্বীনি তথ্য", rows: rows(
+      ["দ্বীনদারিতা", f.deen], ["নামাজ", f.prayer], ["কুরআন তিলাওয়াত", f.quran],
+      ["ফিকহ/মাযহাব", f.fiqh], ["মাহরাম-নন মাহরাম", f.mahram],
+    ) },
+    { title: "পারিবারিক তথ্য", rows: rows(
+      ["বাবা", f.fatherStatus], ["বাবার পেশা", f.fatherJob], ["মা", f.motherStatus],
+      ["মায়ের পেশা", f.motherJob], ["ভাই-বোন", f.siblings], ["অর্থনৈতিক অবস্থা", f.economicStatus],
+      ["পরিবার সম্পর্কে", f.family], ["পরিবারের দ্বীনি অবস্থা", f.familyDeen], ["অভিভাবকের নাম", f.guardian],
+    ) },
+    { title: "বিয়ে সম্পর্কিত পরিকল্পনা", rows: rows(
+      ["বিয়ের কারণ", f.marriageReason], ["জীবনসঙ্গীর পড়াশোনা", f.spouseStudy],
+      ["জীবনসঙ্গীর চাকরি", f.spouseJob], ["বিয়ের পর বাসস্থান", f.residenceAfterMarriage],
+    ) },
+    { title: "প্রত্যাশিত জীবনসঙ্গী", rows: rows(
+      ["প্রত্যাশিত বয়স", f.expectedAge], ["প্রত্যাশিত উচ্চতা", f.expectedHeight],
+      ["প্রত্যাশিত শিক্ষা", f.expectedEducation], ["প্রত্যাশিত জেলা", f.expectedDistrict],
+      ["প্রত্যাশিত বৈবাহিক অবস্থা", f.expectedMarital], ["প্রত্যাশিত গুণাবলি", f.expectedQualities],
+    ) },
+    { title: "নিজের সম্পর্কে", rows: rows(["শখ ও জীবনের লক্ষ্য", f.hobbies], ["বিস্তারিত", f.about]) },
+  ].filter((section) => section.rows.length);
+
+  return {
+    id,
+    who: f.gender === "নারী" || f.gender === "পাত্রী" ? "পাত্রী" : "পাত্র",
+    age: f.age || "—",
+    height: f.height || "—",
+    marital: f.marital || "—",
+    complexion: f.complexion || "—",
+    dist: f.dist || "—",
+    area: [f.upazila, f.thana, f.union, f.village].filter(Boolean).join(", ") || "—",
+    job: f.job || "—",
+    edu: [f.edu, f.institute].filter(Boolean).join(" · ") || "—",
+    deen: f.deen || "—",
+    sections,
+    verified: false,
+  };
+}
+
 function ProfileDetail({ fire }) {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -497,6 +551,14 @@ function ProfileDetail({ fire }) {
             </div>
           </div>
           <div className="bio">
+            {p.sections?.length ? p.sections.map((section) => (
+              <div className="bio-sec" key={section.title}>
+                <h3><Ic d={I.doc} s={18} /> {section.title}</h3>
+                <div className="biorows">
+                  {section.rows.map(([label, value]) => <Row key={label} k={label} v={value} />)}
+                </div>
+              </div>
+            )) : <>
             <div className="bio-sec"><h3><Ic d={I.users} s={18} /> মৌলিক তথ্য</h3>
               <div className="biorows">
                 <Row k="বয়স" v={`${p.age} বছর`} /><Row k="উচ্চতা" v={p.height} />
@@ -516,6 +578,7 @@ function ProfileDetail({ fire }) {
             <div className="bio-sec"><h3><Ic d={I.heart} s={18} /> প্রত্যাশিত জীবনসঙ্গী</h3>
               <p style={{ fontSize: 15, color: C.ink }}>{p.about}</p>
             </div>
+            </>}
             <div className="guard"><Ic d={I.shield} s={20} c={C.gold} /> <span>যোগাযোগ ও আগ্রহ প্রকাশ অভিভাবকের (ওয়ালি) সম্পৃক্ততায় সম্পন্ন হয়। সরাসরি যোগাযোগের তথ্য গোপন রাখা হয়েছে।</span></div>
           </div>
         </div>
@@ -1009,23 +1072,7 @@ function Register({ fire }) {
     const next = e.target.value;
     setF({ ...f, unionId: next, union: bn(formUnions.find((u) => u.id === next)) });
   };
-  const publicProfile = {
-    id: newId,
-    who: f.gender === "নারী" || f.gender === "পাত্রী" ? "পাত্রী" : "পাত্র",
-    age: f.age || "—",
-    height: f.height || "—",
-    marital: f.marital || "—",
-    complexion: f.complexion || "—",
-    dist: f.dist || "—",
-    area: [f.upazila, f.thana, f.union, f.village].filter(Boolean).join(", ") || "—",
-    job: f.job || "—",
-    edu: [f.edu, f.institute].filter(Boolean).join(" · ") || "—",
-    deen: f.deen || "—",
-    religious: [f.prayer, f.quran, f.fiqh, f.mahram, f.religiousStudy].filter(Boolean).join("। ") || "তথ্য দেওয়া হয়নি।",
-    family: [f.family, f.familyDeen, f.economicStatus, f.siblings].filter(Boolean).join("। ") || "তথ্য দেওয়া হয়নি।",
-    about: [f.about, f.expectedQualities, f.expectedAge && `প্রত্যাশিত বয়স: ${f.expectedAge}`, f.expectedEducation && `প্রত্যাশিত শিক্ষা: ${f.expectedEducation}`].filter(Boolean).join("। ") || "তথ্য দেওয়া হয়নি।",
-    verified: false,
-  };
+  const publicProfile = buildPublicProfile(f, newId);
   const copyCreatedLink = async () => {
     try { await navigator.clipboard.writeText(shareUrlFor(publicProfile)); fire("বায়োডাটার লিংক কপি করা হয়েছে!"); }
     catch { fire("লিংক কপি করা যায়নি।", "error"); }
