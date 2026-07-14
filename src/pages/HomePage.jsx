@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { C, Ic, I, PROFILES, PLANS, BARAKAH_PLAN, STORIES, bn, ALL_DIVISIONS, ALL_DISTRICTS, getDistrictsByDivisionSafe, getUpazilasByDistrictSafe, getThanasByDistrictSafe, getUnionsByUpazilaSafe, PCard, PlanCard, StoryCard } from "./shared";
 
-export default function HomePage({ go, fire }) {
+export default function HomePage({ go }) {
   const [side, setSide] = useState("পাত্রী");
   const [searchAge, setSearchAge] = useState("সব");
   const [searchDist, setSearchDist] = useState("সব");

@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./NoorNikah.css";
-const HomePage = React.lazy(() => import("./pages/HomePage"));
-const MembershipPage = React.lazy(() => import("./pages/MembershipPage"));
-const AssistedPage = React.lazy(() => import("./pages/AssistedPage"));
-const CheckoutPage = React.lazy(() => import("./pages/CheckoutPage"));
 import { Logo, C, Ic, I, ProfileAvatar, VerifiedBadge, PROFILES, PLANS, BARAKAH_PLAN, STORIES, PageHead, PCard, PlanCard, StoryCard, bn, ALL_DISTRICTS, ALL_DIVISIONS, getDistrictsByDivisionSafe, getUpazilasByDistrictSafe, getThanasByDistrictSafe, getUnionsByUpazilaSafe } from "./pages/shared";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Routes, Route, Link, useNavigate, useLocation, useParams } from "react-router-dom";
+import AiAssistant from "./components/AiAssistant";
 
 /* ---------- shared layout ---------- */
 function LanguageSwitcher() {
@@ -39,31 +36,32 @@ function LanguageSwitcher() {
   return <div className="language-switch notranslate"><span aria-hidden="true">🌐</span><select aria-label="ভাষা নির্বাচন" value={language} onChange={(e) => changeLanguage(e.target.value)}>{languages.map(([code, label]) => <option value={code} key={code}>{label}</option>)}</select><div id="google_translate_element" /></div>;
 }
 
-function Header({ page, go, theme, toggleTheme }) {
+function Header({ theme, toggleTheme }) {
   const [menu, setMenu] = useState(false);
-  const link = (id, label) => (
-    <a className={page === id ? "active" : ""} onClick={() => { go(id); setMenu(false); }}>{label}</a>
-  );
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const page = pathname.split('/')[1] || 'home';
+
   return (
     <>
       <div className="announce">১০০% হালাল পদ্ধতিতে আপনার দ্বীনদার জীবনসঙ্গী খুঁজুন — আজই বিনামূল্যে শুরু করুন</div>
       <header>
         <div className="wrap nav">
-          <a className="brand" onClick={() => go("home")}>{Logo}
+          <Link to="/" className="brand">{Logo}
             <span><span className="bn serif">নূর নিকাহ</span><br /><span className="en">NoorNikah</span></span>
-          </a>
+          </Link>
           <nav className="navlinks">
-            {link("home", "হোম")}
-            {link("browse", "প্রোফাইল")}
-            <a className={page === "assisted" ? "active" : ""} onClick={() => go("assisted")}>সহায়ক সেবা</a>
-            <a className={page === "membership" ? "active" : ""} onClick={() => go("membership")}>সদস্যপদ</a>
-            <a className={page === "stories" ? "active" : ""} onClick={() => go("stories")}>সফলতার গল্প</a>
+            <Link to="/" className={page === 'home' ? "active" : ""}>হোম</Link>
+            <Link to="/browse" className={page === 'browse' ? "active" : ""}>প্রোফাইল</Link>
+            <Link to="/assisted" className={page === 'assisted' ? "active" : ""}>সহায়ক সেবা</Link>
+            <Link to="/membership" className={page === 'membership' ? "active" : ""}>সদস্যপদ</Link>
+            <Link to="/stories" className={page === 'stories' ? "active" : ""}>সফলতার গল্প</Link>
           </nav>
           <div className="nav-cta">
             <LanguageSwitcher />
             <button className="theme-toggle" onClick={toggleTheme} aria-label={theme === "dark" ? "লাইট মোড" : "লো-লাইট মোড"}>{theme === "dark" ? "☀" : "☾"}</button>
-            <button className="btn btn-ghost" onClick={() => go("login")}>লগইন</button>
-            <button className="btn btn-gold" onClick={() => go("register")}>বায়োডাটা তৈরি করুন</button>
+            <button className="btn btn-ghost" onClick={() => navigate("/login")}>লগইন</button>
+            <button className="btn btn-gold" onClick={() => navigate("/register")}>বায়োডাটা তৈরি করুন</button>
             <button className="btn btn-ghost hamburger" style={{ padding: "10px 12px" }} aria-label="মেনু" onClick={() => setMenu(!menu)}>
               <Ic d={<path d="M4 7h16M4 12h16M4 17h16" />} c={C.green900} />
             </button>
@@ -72,30 +70,32 @@ function Header({ page, go, theme, toggleTheme }) {
         {menu && <button className="menu-backdrop" aria-label="মেনু বন্ধ করুন" onClick={() => setMenu(false)} />}
         <div className={"mobile-menu" + (menu ? " open" : "")}>
           <div className="mobile-menu-head"><b>মেনু</b><button aria-label="মেনু বন্ধ করুন" onClick={() => setMenu(false)}>×</button></div>
-          {link("home", "হোম")}{link("browse", "প্রোফাইল")}{link("assisted", "সহায়ক সেবা")}{link("membership", "সদস্যপদ")}{link("stories", "সফলতার গল্প")}
-          <a onClick={() => { go("login"); setMenu(false); }}>লগইন</a>
-          <button className="btn btn-gold" style={{ marginTop: 12 }} onClick={() => { go("register"); setMenu(false); }}>বায়োডাটা তৈরি করুন</button>
+          <Link to="/" onClick={() => setMenu(false)}>হোম</Link>
+          <Link to="/browse" onClick={() => setMenu(false)}>প্রোফাইল</Link>
+          <Link to="/assisted" onClick={() => setMenu(false)}>সহায়ক সেবা</Link>
+          <Link to="/membership" onClick={() => setMenu(false)}>সদস্যপদ</Link>
+          <Link to="/stories" onClick={() => setMenu(false)}>সফলতার গল্প</Link>
+          <Link to="/login" onClick={() => setMenu(false)}>লগইন</Link>
+          <button className="btn btn-gold" style={{ marginTop: 12 }} onClick={() => { navigate("/register"); setMenu(false); }}>বায়োডাটা তৈরি করুন</button>
         </div>
       </header>
     </>
   );
 }
 
-function Footer({ go }) {
+function Footer() {
   return (
     <footer>
       <div className="wrap">
         <div className="fgrid">
           <div>
-            <a className="brand" onClick={() => go("home")} style={{ marginBottom: 12 }}>{Logo}
-              <span><span className="bn serif" style={{ color: "#fff" }}>নূর নিকাহ</span><br /><span className="en">NoorNikah</span></span></a>
+            <Link to="/" className="brand" style={{ marginBottom: 12 }}>{Logo}
+              <span><span className="bn serif" style={{ color: "#fff" }}>নূর নিকাহ</span><br /><span className="en">NoorNikah</span></span></Link>
             <p style={{ fontSize: 14, opacity: .75, maxWidth: 280 }}>হালাল পথে দ্বীনদার জীবনসঙ্গী খুঁজে পাওয়ার নিরাপদ ও বিশ্বস্ত প্ল্যাটফর্ম।</p>
           </div>
-          <div><h5>প্ল্যাটফর্ম</h5>
-            <a onClick={() => go("home")}>হোম</a><a onClick={() => go("browse")}>প্রোফাইল</a>
-            <a onClick={() => go("register")}>বায়োডাটা তৈরি</a><a onClick={() => go("assisted")}>সহায়ক সেবা</a><a onClick={() => go("membership")}>সদস্যপদ</a><a onClick={() => go("stories")}>সফলতার গল্প</a><a onClick={() => go("login")}>লগইন</a></div>
-          <div><h5>সহায়তা</h5><a onClick={() => go("contact")}>যোগাযোগ</a><a onClick={() => go("safety")}>নিরাপত্তা টিপস</a><a onClick={() => go("faq")}>প্রশ্ন ও উত্তর</a></div>
-          <div><h5>আইনি</h5><a onClick={() => go("privacy")}>গোপনীয়তা নীতি</a><a onClick={() => go("terms")}>ব্যবহারের শর্ত</a></div>
+          <div><h5>প্ল্যাটফর্ম</h5><Link to="/">হোম</Link><Link to="/browse">প্রোফাইল</Link><Link to="/register">বায়োডাটা তৈরি</Link><Link to="/assisted">সহায়ক সেবা</Link><Link to="/membership">সদস্যপদ</Link><Link to="/stories">সফলতার গল্প</Link><Link to="/login">লগইন</Link></div>
+          <div><h5>সহায়তা</h5><Link to="/contact">যোগাযোগ</Link><Link to="/safety">নিরাপত্তা টিপস</Link><Link to="/faq">প্রশ্ন ও উত্তর</Link></div>
+          <div><h5>আইনি</h5><Link to="/privacy">গোপনীয়তা নীতি</Link><Link to="/terms">ব্যবহারের শর্ত</Link></div>
         </div>
         <div className="fbottom">
           <span>© {new Date().getFullYear()} নূর নিকাহ (ডেমো)। সর্বস্বত্ব সংরক্ষিত।</span>
@@ -109,7 +109,9 @@ function Footer({ go }) {
 
 
 /* ---------- HOME ---------- */
-function Home({ go, fire }) {
+function Home() {
+  const navigate = useNavigate();
+  const go = (page, data) => navigate(page === "home" ? "/" : `/${page}${page === "profile" && data?.id ? `/${data.id}` : ""}`, { state: data });
   const [side, setSide] = useState("পাত্রী");
   const [searchAge, setSearchAge] = useState("সব");
   const [searchDist, setSearchDist] = useState("সব");
@@ -157,8 +159,8 @@ function Home({ go, fire }) {
               <div className="field"><label>থানা</label><select value={searchThanaId} onChange={(e) => setSearchThanaId(e.target.value)} disabled={!searchDistrictId}><option value="">সব থানা</option>{homeThanas.map((t) => <option key={t.id} value={t.id}>{bn(t)}</option>)}</select></div>
               <div className="field"><label>ইউনিয়ন</label><select value={searchUnionId} onChange={(e) => setSearchUnionId(e.target.value)} disabled={!searchUpazilaId}><option value="">সব ইউনিয়ন</option>{homeUnions.map((u) => <option key={u.id} value={u.id}>{bn(u)}</option>)}</select></div>
               <div className="field"><label>গ্রাম</label><input value={searchVillage} onChange={(e) => setSearchVillage(e.target.value)} placeholder="গ্রামের নাম" /></div>
-              <div className="field"><label>দ্বীনদারিতা</label><select value={searchDeen} onChange={(e) => setSearchDeen(e.target.value)}><option>সব</option><option>নিয়মিত নামাজি</option><option>পর্দানশীন</option><option>হাফিজ/হাফিজা</option><option>আলেম</option></select></div>
-              <button className="btn btn-gold" onClick={() => go("browse", { who: side, age: searchAge, dist: searchDist, divisionId: searchDivisionId, districtId: searchDistrictId, upazilaId: searchUpazilaId, thanaId: searchThanaId, unionId: searchUnionId, upazila: bn(selectedHomeUpazila), thana: bn(selectedHomeThana), union: bn(selectedHomeUnion), village: searchVillage, deen: searchDeen })}><Ic d={I.search} s={17} c={C.green900} /> খুঁজুন</button>
+              <div className="field"><label>দ্বীনদারিতা</label><select value={searchDeen} onChange={(e) => setSearchDeen(e.target.value)}><option>সব</option><option>নিয়মিত নামাজি</option><option>পর্দানশীন</option><option>হাফিজ</option><option>আলেম</option></select></div>
+              <button className="btn btn-gold" onClick={() => navigate("/browse", { state: { who: side, age: searchAge, dist: searchDist, divisionId: searchDivisionId, districtId: searchDistrictId, upazilaId: searchUpazilaId, thanaId: searchThanaId, unionId: searchUnionId, upazila: bn(selectedHomeUpazila), thana: bn(selectedHomeThana), union: bn(selectedHomeUnion), village: searchVillage, deen: searchDeen } })}><Ic d={I.search} s={17} c={C.green900} /> খুঁজুন</button>
             </div>
             <div className="note"><Ic d={I.lock} s={15} c={C.muted} /> আপনার ছবি ও যোগাযোগের তথ্য সর্বদা গোপন থাকে।</div>
           </div>
@@ -188,7 +190,7 @@ function Home({ go, fire }) {
       <section className="block" style={{ background: "#EFEADD" }}><div className="wrap">
         <div className="head"><div className="kicker">সাম্প্রতিক</div><h2 className="serif">নতুন প্রোফাইল সমূহ</h2><p>গোপনীয়তা রক্ষার্থে ছবি গোপন; বিস্তারিত দেখতে কার্ডে ক্লিক করুন।</p></div>
         <div className="profiles">{PROFILES.slice(0, 4).map((p) => <PCard key={p.id} p={p} go={go} />)}</div>
-        <div style={{ textAlign: "center", marginTop: 34 }}><button className="btn btn-green" onClick={() => go("browse")}>সব প্রোফাইল দেখুন</button></div>
+        <div style={{ textAlign: "center", marginTop: 34 }}><button className="btn btn-green" onClick={() => navigate("/browse")}>সব প্রোফাইল দেখুন</button></div>
       </div></section>
 
       <section className="block"><div className="wrap">
@@ -209,7 +211,7 @@ function Home({ go, fire }) {
           <span className="tag" style={{ color: C.goldSoft, letterSpacing: 1.5, textTransform: "uppercase", fontSize: 11, fontWeight: 700 }}>সহায়ক ম্যাচমেকিং সেবা</span>
           <h2 className="serif">নিজে খুঁজতে সময় নেই? আমাদের উপদেষ্টা খুঁজে দেবেন</h2>
           <p>একজন অভিজ্ঞ ম্যাচমেকিং উপদেষ্টা আপনাকে বুঝে, হাজারো প্রোফাইল থেকে উপযুক্ত ম্যাচ বাছাই করে, আপনার হয়ে যোগাযোগ ও সাক্ষাৎ পর্যন্ত সব সামলান — ব্যক্তিগত ছোঁয়ায়।</p>
-          <button className="btn btn-gold btn-lg" onClick={() => go("assisted")}>সহায়ক সেবা সম্পর্কে জানুন</button>
+          <button className="btn btn-gold btn-lg" onClick={() => navigate("/assisted")}>সহায়ক সেবা সম্পর্কে জানুন</button>
         </div>
       </div></section>
 
@@ -233,7 +235,7 @@ function Home({ go, fire }) {
           <div style={{ display: "inline-flex", marginBottom: 14 }}><Ic d={I.moon} s={40} c={C.goldSoft} /></div>
           <h2 className="serif">আপনার পবিত্র যাত্রা শুরু হোক আজই</h2>
           <p>বিনামূল্যে বায়োডাটা তৈরি করুন এবং দ্বীনদার জীবনসঙ্গীর সন্ধানে প্রথম ধাপ নিন।</p>
-          <button className="btn btn-gold btn-lg" onClick={() => go("register")}>বিনামূল্যে শুরু করুন</button>
+          <button className="btn btn-gold btn-lg" onClick={() => navigate("/register")}>বিনামূল্যে শুরু করুন</button>
         </div>
       </div></section>
     </>
@@ -241,18 +243,23 @@ function Home({ go, fire }) {
 }
 
 /* ---------- BROWSE ---------- */
-function Browse({ go, prefs }) {
+function Browse() {
+  const navigate = useNavigate();
+  const go = (page, data) => navigate(page === "profile" && data?.id ? `/profile/${data.id}` : `/${page}`, { state: data });
+  const location = useLocation();
+  const prefs = location.state || {};
+
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const [who, setWho] = useState(prefs?.who || "সব");
-  const [divisionId, setDivisionId] = useState(prefs?.divisionId || "");
-  const [districtId, setDistrictId] = useState(prefs?.districtId || "");
-  const [upazilaId, setUpazilaId] = useState(prefs?.upazilaId || "");
-  const [thanaId, setThanaId] = useState(prefs?.thanaId || "");
-  const [unionId, setUnionId] = useState(prefs?.unionId || "");
-  const [dist, setDist] = useState(prefs?.dist || "সব");
-  const [age, setAge] = useState(prefs?.age || "সব");
-  const [deen, setDeen] = useState(prefs?.deen || "সব");
-  const [village, setVillage] = useState(prefs?.village || "");
+  const [who, setWho] = useState(prefs.who || "সব");
+  const [divisionId, setDivisionId] = useState(prefs.divisionId || "");
+  const [districtId, setDistrictId] = useState(prefs.districtId || "");
+  const [upazilaId, setUpazilaId] = useState(prefs.upazilaId || "");
+  const [thanaId, setThanaId] = useState(prefs.thanaId || "");
+  const [unionId, setUnionId] = useState(prefs.unionId || "");
+  const [dist, setDist] = useState(prefs.dist || "সব");
+  const [age, setAge] = useState(prefs.age || "সব");
+  const [deen, setDeen] = useState(prefs.deen || "সব");
+  const [village, setVillage] = useState(prefs.village || "");
   const browseDistricts = divisionId ? getDistrictsByDivisionSafe(divisionId) : ALL_DISTRICTS;
   const browseUpazilas = districtId ? getUpazilasByDistrictSafe(districtId) : [];
   const browseThanas = districtId ? getThanasByDistrictSafe(districtId) : [];
@@ -300,7 +307,7 @@ function Browse({ go, prefs }) {
   return (
     <>
       <div className="pagehead"><div className="wrap">
-        <div className="crumb"><a onClick={() => go("home")}>হোম</a> <span>›</span> <span>প্রোফাইল</span></div>
+        <div className="crumb"><Link to="/">হোম</Link> <span>›</span> <span>প্রোফাইল</span></div>
         <h1 className="serif">প্রোফাইল ব্রাউজ করুন</h1>
         <p>আপনার পছন্দ অনুযায়ী যাচাইকৃত প্রোফাইল খুঁজে নিন।</p>
       </div></div>
@@ -329,9 +336,9 @@ function Browse({ go, prefs }) {
             <div className="filter-actions"><button className="btn btn-ghost" onClick={resetFilters}>রিসেট</button><button className="btn btn-gold" onClick={() => setFiltersOpen(false)}>ফলাফল দেখুন</button></div>
           </aside>
           <div>
-            <div className="result-meta"><span><b>{list.length}</b> টি প্রোফাইল পাওয়া গেছে</span><button className="btn btn-gold" onClick={() => go("register")}>বায়োডাটা তৈরি করুন</button></div>
+            <div className="result-meta"><span><b>{list.length}</b> টি প্রোফাইল পাওয়া গেছে</span><button className="btn btn-gold" onClick={() => navigate("/register")}>বায়োডাটা তৈরি করুন</button></div>
             {list.length ? (
-              <div className="grid3">{list.map((p) => <PCard key={p.id} p={p} go={go} match={matchFor(p)} />)}</div>
+              <div className="grid3">{list.map((p) => <PCard key={p.id} p={p} match={matchFor(p)} go={go} />)}</div>
             ) : (
               <div className="empty"><Ic d={I.search} s={40} c={C.muted} /><p style={{ marginTop: 12 }}>এই ফিল্টারে কোনো প্রোফাইল পাওয়া যায়নি। ফিল্টার পরিবর্তন করুন।</p></div>
             )}
@@ -343,16 +350,134 @@ function Browse({ go, prefs }) {
 }
 
 /* ---------- PROFILE DETAIL ---------- */
-function ProfileDetail({ go, profile, fire }) {
-  const p = profile || PROFILES[0];
-  const Row = ({ k, v }) => (<div className="biorow"><span className="k">{k}</span><span className="v">{v}</span></div>);
+function encodeSharedProfile(profile) {
+  const bytes = new TextEncoder().encode(JSON.stringify(profile));
+  const binary = Array.from(bytes, (byte) => String.fromCharCode(byte)).join("");
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+function decodeSharedProfile(value) {
+  if (!value) return null;
+  try {
+    const padded = value.replace(/-/g, "+").replace(/_/g, "/").padEnd(Math.ceil(value.length / 4) * 4, "=");
+    const bytes = Uint8Array.from(atob(padded), (char) => char.charCodeAt(0));
+    const profile = JSON.parse(new TextDecoder().decode(bytes));
+    return profile?.id ? profile : null;
+  } catch { return null; }
+}
+
+function getStoredProfile(id) {
+  try { return JSON.parse(localStorage.getItem(`noornikah-profile-${id}`) || "null"); }
+  catch { return null; }
+}
+
+function shareUrlFor(profile) {
+  return `${window.location.origin}/profile/${encodeURIComponent(profile.id)}?bio=${encodeSharedProfile(profile)}`;
+}
+
+function ProfileDetail({ fire }) {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const profileRef = useRef(null);
+  const sharedProfile = decodeSharedProfile(new URLSearchParams(location.search).get("bio"));
+  const p = PROFILES.find(prof => prof.id === id) || getStoredProfile(id) || (sharedProfile?.id === id ? sharedProfile : null);
+  const Row = ({ k, v }) => (<div className="biorow"><span className="k">{k}</span><span className="v">{v || "—"}</span></div>);
+
+  const copyProfileLink = async () => {
+    if (!p) return;
+    try { await navigator.clipboard.writeText(shareUrlFor(p)); fire("বায়োডাটার লিংক কপি করা হয়েছে!"); }
+    catch { fire("লিংক কপি করা যায়নি।", "error"); }
+  };
+
+  const downloadPdf = async () => {
+    if (!profileRef.current || !p) return;
+    fire("PDF তৈরি হচ্ছে…", "info");
+    try {
+      const [{ default: html2canvas }, { default: JsPDF }] = await Promise.all([import("html2canvas"), import("jspdf")]);
+      const canvas = await html2canvas(profileRef.current, {
+        scale: 2,
+        backgroundColor: "#ffffff",
+        useCORS: true,
+        onclone: (documentClone) => documentClone.querySelectorAll(".print-hide").forEach((node) => { node.style.display = "none"; }),
+      });
+      const pdf = new JsPDF({ orientation: "portrait", unit: "pt", format: "a4" });
+      const margin = 28;
+      const pageWidth = pdf.internal.pageSize.getWidth() - margin * 2;
+      const pageHeight = pdf.internal.pageSize.getHeight() - margin * 2;
+      const imageHeight = canvas.height * pageWidth / canvas.width;
+      const image = canvas.toDataURL("image/jpeg", 0.92);
+      let remaining = imageHeight;
+      let y = margin;
+      pdf.addImage(image, "JPEG", margin, y, pageWidth, imageHeight);
+      remaining -= pageHeight;
+      while (remaining > 0) {
+        pdf.addPage();
+        y = margin - (imageHeight - remaining);
+        pdf.addImage(image, "JPEG", margin, y, pageWidth, imageHeight);
+        remaining -= pageHeight;
+      }
+      pdf.save(`NoorNikah-${p.id}.pdf`);
+      fire("PDF ডাউনলোড হয়েছে।", "success");
+    } catch { fire("PDF তৈরি করা যায়নি। আবার চেষ্টা করুন।", "error"); }
+  };
+
+  useEffect(() => {
+    if (location.state?.downloadPdf && p) {
+      const timer = setTimeout(() => {
+        downloadPdf();
+        navigate(location.pathname + location.search, { replace: true, state: {} });
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+    if (location.state?.print) {
+      const timer = setTimeout(() => {
+        window.print();
+        navigate(location.pathname, { replace: true, state: {} });
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [location.state, location.pathname, location.search, navigate]);
+
+  const PrintStyles = () => (
+    <style type="text/css" media="print">{`
+      @page { size: A4; margin: 20mm; }
+      body { background-color: #fff !important; color: #000; }
+      .nn { background: none !important; }
+      .nn.dark { color-scheme: light; --bg: #fff; --ink: #000; --card: #fff; --line: #eee; }
+      header, footer, .ai-assistant, .pagehead .crumb, .mobile-profile-actions, .interest-cta, .pd-card .btn-ghost, .pd-card .btn-gold, .guard, .print-hide { display: none !important; }
+      .print-only-title { display: block; text-align: center; border-bottom: 1px solid #ccc; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+      .print-only-title h1 { font-size: 24px; margin-bottom: 4px; }
+      .print-only-title p { font-size: 12px; color: #666; }
+      .pd { display: block; gap: 0; }
+      .pd-card { box-shadow: none; border: 1px solid #ddd; padding: 1rem; margin-bottom: 1.5rem; display: flex; flex-direction: row; align-items: center; gap: 1.5rem; }
+      .pd-card .ava { width: 100px; height: 100px; flex-shrink: 0; }
+      .pd-card .meta { text-align: left; }
+      .bio { padding: 0; }
+      .biorow { border-bottom: 1px solid #eee; }
+      .biorow .k { width: 150px; }
+      h1, h2, h3 { color: #000 !important; }
+      .deen { background: #eee !important; color: #000 !important; border: 1px solid #ddd; }
+    `}</style>
+  );
+
+  if (!p) return (
+    <section className="block"><div className="wrap"><div className="empty">
+      <h2>বায়োডাটা পাওয়া যায়নি</h2>
+      <p>লিংকটি অসম্পূর্ণ অথবা বায়োডাটাটি আর উপলভ্য নেই।</p>
+      <button className="btn btn-gold" style={{ marginTop: 16 }} onClick={() => navigate("/browse")}>প্রোফাইল দেখুন</button>
+    </div></div></section>
+  );
+
   return (
     <>
-      <div className="pagehead"><div className="wrap">
-        <div className="crumb"><a onClick={() => go("home")}>হোম</a> <span>›</span> <a onClick={() => go("browse")}>প্রোফাইল</a> <span>›</span> <span>#{p.id}</span></div>
+      <PrintStyles />
+      <div className="print-only-title" style={{ display: 'none' }}><h1>বায়োডাটা: #{p.id}</h1><p>noornikah-demo.vercel.app থেকে তৈরি</p></div>
+      <div className="pagehead print-hide"><div className="wrap">
+        <div className="crumb"><Link to="/">হোম</Link> <span>›</span> <Link to="/browse">প্রোফাইল</Link> <span>›</span> <span>#{p.id}</span></div>
       </div></div>
       <section style={{ paddingBottom: 70 }}><div className="wrap">
-        <div className="pd">
+        <div className="pd" ref={profileRef}>
           <div className="pd-card">
             <div className="ava"><ProfileAvatar p={p} s={122} color="rgba(255,255,255,.52)" sw={1.3} /></div>
             <div className="meta">
@@ -363,8 +488,12 @@ function ProfileDetail({ go, profile, fire }) {
               <div className="mini"><Ic d={I.book} s={15} c={C.muted} /> {p.edu}</div>
               <span className="deen" style={{ display: "inline-block", marginTop: 8, fontSize: 12, background: "rgba(201,162,39,.14)", color: "#8a6d12", padding: "4px 10px", borderRadius: 999 }}>{p.deen}</span>
               {p.verified && <div className="guard" style={{ marginTop: 12, fontSize: 12 }}><VerifiedBadge size={18} /><span>বারাকাহ ভেরিফায়েড প্রোফাইল</span></div>}
-              <button className="btn btn-gold interest-cta" onClick={() => go("interest", { profile: p })}><Ic d={I.heart} s={18} c={C.green900} /> আগ্রহ পাঠান</button>
-              <button className="btn btn-ghost" style={{ width: "100%", marginTop: 10 }} onClick={() => go("browse")}><Ic d={I.back} s={16} c={C.green900} /> ফিরে যান</button>
+              <button className="btn btn-gold interest-cta print-hide" onClick={() => navigate("/interest", { state: { profile: p } })}><Ic d={I.heart} s={18} c={C.green900} /> আগ্রহ পাঠান</button>
+              <div className="print-hide" style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => navigate("/browse")}><Ic d={I.back} s={16} c={C.green900} /> ফিরে যান</button>
+                <button className="btn btn-ghost" style={{ flex: 1 }} onClick={copyProfileLink}>লিংক কপি</button>
+                <button className="btn btn-ghost" style={{ flex: 1 }} onClick={downloadPdf}>PDF ডাউনলোড</button>
+              </div>
             </div>
           </div>
           <div className="bio">
@@ -391,7 +520,7 @@ function ProfileDetail({ go, profile, fire }) {
           </div>
         </div>
       </div></section>
-      <div className="mobile-profile-actions"><button className="btn btn-ghost" onClick={() => go("browse")}><Ic d={I.back} s={17} /> ফিরে যান</button><button className="btn btn-gold" onClick={() => go("interest", { profile: p })}><Ic d={I.heart} s={18} c={C.green900} /> আগ্রহ পাঠান</button></div>
+      <div className="mobile-profile-actions print-hide"><button className="btn btn-ghost" onClick={() => navigate("/browse")}><Ic d={I.back} s={17} /> ফিরে যান</button><button className="btn btn-gold" onClick={() => navigate("/interest", { state: { profile: p } })}><Ic d={I.heart} s={18} c={C.green900} /> আগ্রহ পাঠান</button></div>
     </>
   );
 }
@@ -399,7 +528,8 @@ function ProfileDetail({ go, profile, fire }) {
 /* ---------- FOOTER PAGES ---------- */
 
 
-function ContactPage({ go, fire }) {
+function ContactPage({ fire }) {
+  const navigate = useNavigate();
   const [done, setDone] = useState(false);
   const [ref] = useState(() => "SUP-" + Math.floor(10000 + Math.random() * 90000));
   const [form, setForm] = useState({ name: "", contact: "", subject: "", message: "" });
@@ -410,14 +540,14 @@ function ContactPage({ go, fire }) {
   };
   if (done) return (
     <>
-      <PageHead go={go} title="বার্তা গ্রহণ করা হয়েছে" desc="সহায়তা টিম আপনার বার্তাটি পর্যালোচনা করবে।" />
+      <PageHead title="বার্তা গ্রহণ করা হয়েছে" desc="সহায়তা টিম আপনার বার্তাটি পর্যালোচনা করবে।" />
       <section className="block"><div className="wrap"><div className="success">
         <div className="badge"><Ic d={I.check} s={36} c={C.green600} sw={2.2} /></div>
         <h2 className="serif">ধন্যবাদ</h2>
         <p>আপনার বার্তা রেফারেন্স নম্বর:</p>
         <div className="pid">{ref}</div>
         <div className="actionbar" style={{ justifyContent: "center" }}>
-          <button className="btn btn-gold" onClick={() => go("home")}>হোমে ফিরুন</button>
+          <button className="btn btn-gold" onClick={() => navigate("/")}>হোমে ফিরুন</button>
           <button className="btn btn-ghost" onClick={() => setDone(false)}>আরেকটি বার্তা পাঠান</button>
         </div>
       </div></div></section>
@@ -425,7 +555,7 @@ function ContactPage({ go, fire }) {
   );
   return (
     <>
-      <PageHead go={go} title="যোগাযোগ" desc="প্রোফাইল, যাচাই বা সদস্যপদ সংক্রান্ত সহায়তার জন্য আমাদের সঙ্গে যোগাযোগ করুন।" />
+      <PageHead title="যোগাযোগ" desc="প্রোফাইল, যাচাই বা সদস্যপদ সংক্রান্ত সহায়তার জন্য আমাদের সঙ্গে যোগাযোগ করুন।" />
       <section className="block"><div className="wrap"><div className="content-page contact-panel">
         <div className="info-card">
           <h3><Ic d={I.chat} s={18} /> সহায়তা ডেস্ক</h3>
@@ -451,10 +581,10 @@ function ContactPage({ go, fire }) {
   );
 }
 
-function SafetyPage({ go }) {
+function SafetyPage() {
   return (
     <>
-      <PageHead go={go} title="নিরাপত্তা টিপস" desc="নিরাপদ, শালীন ও অভিভাবক-সম্পৃক্ত যোগাযোগের জন্য গুরুত্বপূর্ণ নির্দেশনা।" />
+      <PageHead title="নিরাপত্তা টিপস" desc="নিরাপদ, শালীন ও অভিভাবক-সম্পৃক্ত যোগাযোগের জন্য গুরুত্বপূর্ণ নির্দেশনা।" />
       <section className="block"><div className="wrap"><div className="content-grid">
         {[
           ["পরিচয় যাচাই করুন", "প্রোফাইল আইডি, পারিবারিক পরিচয় ও শিক্ষাগত/পেশাগত তথ্য যাচাই না করে সিদ্ধান্ত নেবেন না।"],
@@ -469,7 +599,7 @@ function SafetyPage({ go }) {
   );
 }
 
-function FaqPage({ go }) {
+function FaqPage() {
   const [open, setOpen] = useState(0);
   const items = [
     ["নূর নিকাহ কী?", "এটি একটি ডেমো হালাল ম্যাট্রিমনি প্ল্যাটফর্ম, যেখানে প্রোফাইল দেখা, বায়োডাটা তৈরি ও নিরাপদ যোগাযোগের ধারণা দেখানো হয়েছে।"],
@@ -479,7 +609,7 @@ function FaqPage({ go }) {
   ];
   return (
     <>
-      <PageHead go={go} title="প্রশ্ন ও উত্তর" desc="প্ল্যাটফর্ম ব্যবহার নিয়ে সাধারণ প্রশ্নের উত্তর।" />
+      <PageHead title="প্রশ্ন ও উত্তর" desc="প্ল্যাটফর্ম ব্যবহার নিয়ে সাধারণ প্রশ্নের উত্তর।" />
       <section className="block"><div className="wrap"><div className="faq">
         {items.map((f, i) => (
           <div className="qa" key={f[0]}>
@@ -492,10 +622,10 @@ function FaqPage({ go }) {
   );
 }
 
-function PrivacyPage({ go }) {
+function PrivacyPage() {
   return (
     <>
-      <PageHead go={go} title="গোপনীয়তা নীতি" desc="ব্যবহারকারীর তথ্য কীভাবে নিরাপদ রাখা হবে তার ডেমো নীতিমালা।" />
+      <PageHead title="গোপনীয়তা নীতি" desc="ব্যবহারকারীর তথ্য কীভাবে নিরাপদ রাখা হবে তার ডেমো নীতিমালা।" />
       <section className="block"><div className="wrap"><div className="content-page">
         <div className="info-card">
           <h3><Ic d={I.lock} s={18} /> তথ্য সুরক্ষা</h3>
@@ -511,10 +641,10 @@ function PrivacyPage({ go }) {
   );
 }
 
-function TermsPage({ go }) {
+function TermsPage() {
   return (
     <>
-      <PageHead go={go} title="ব্যবহারের শর্ত" desc="নূর নিকাহ ব্যবহারের সময় প্রত্যাশিত আচরণ ও দায়িত্ব।" />
+      <PageHead title="ব্যবহারের শর্ত" desc="নূর নিকাহ ব্যবহারের সময় প্রত্যাশিত আচরণ ও দায়িত্ব।" />
       <section className="block"><div className="wrap"><div className="content-page">
         <div className="info-card">
           <h3><Ic d={I.doc} s={18} /> ব্যবহার নীতিমালা</h3>
@@ -530,16 +660,18 @@ function TermsPage({ go }) {
   );
 }
 
-function LegacyMembershipPage({ go }) {
+function LegacyMembershipPage() {
+  const navigate = useNavigate();
+  const go = (page, data) => navigate(`/${page}`, { state: data });
   return (
     <>
-      <PageHead go={go} title="সদস্যপদ" desc="আপনার প্রয়োজন অনুযায়ী প্যাকেজ বেছে নিন। ফ্রি প্রোফাইল তৈরি থেকে শুরু করে ভিআইপি ম্যাচমেকিং পর্যন্ত।" />
+      <PageHead title="সদস্যপদ" desc="আপনার প্রয়োজন অনুযায়ী প্যাকেজ বেছে নিন। ফ্রি প্রোফাইল তৈরি থেকে শুরু করে ভিআইপি ম্যাচমেকিং পর্যন্ত।" />
       <section className="block"><div className="wrap">
         <div className="plans">{[...PLANS, BARAKAH_PLAN].map((p) => <PlanCard key={p.id} p={p} go={go} />)}</div>
         <div className="info-card" style={{ marginTop: 22, borderColor: "rgba(22,137,229,.3)" }}>
           <h3><VerifiedBadge size={20} /> বারাকাহ ব্লু ব্যাজ</h3>
           <p style={{ color: C.muted, marginBottom: 16 }}>সাধারণ সদস্যপদের বাইরে এককালীন অতিরিক্ত পেমেন্টে প্রোফাইল যাচাই, ব্লু ব্যাজ এবং সার্চে অগ্রাধিকার নিন।</p>
-          <button className="btn btn-green" onClick={() => go("barakah")}>বিস্তারিত দেখুন</button>
+          <button className="btn btn-green" onClick={() => navigate("/barakah")}>বিস্তারিত দেখুন</button>
         </div>
         <div className="info-card" style={{ marginTop: 22 }}>
           <h3><Ic d={I.shield} s={18} /> সদস্যপদে যা পাবেন</h3>
@@ -555,10 +687,11 @@ function LegacyMembershipPage({ go }) {
   );
 }
 
-function BarakahPage({ go }) {
+function BarakahPage() {
+  const navigate = useNavigate();
   return (
     <>
-      <PageHead go={go} title="বারাকাহ ব্লু ব্যাজ" desc="আরও আস্থার সঙ্গে আপনার বায়োডাটা উপস্থাপন করুন।" />
+      <PageHead title="বারাকাহ ব্লু ব্যাজ" desc="আরও আস্থার সঙ্গে আপনার বায়োডাটা উপস্থাপন করুন।" />
       <section className="block"><div className="wrap">
         <div className="barakah-hero">
           <div>
@@ -575,7 +708,7 @@ function BarakahPage({ go }) {
             <h3 style={{ marginTop: 12 }}>বারাকাহ ভেরিফায়েড</h3>
             <div className="price serif" style={{ fontSize: 40, color: C.green900, margin: "8px 0" }}>{BARAKAH_PLAN.price}</div>
             <p style={{ color: C.muted, fontSize: 13, marginBottom: 20 }}>{BARAKAH_PLAN.per}</p>
-            <button className="btn btn-gold" style={{ width: "100%" }} onClick={() => go("checkout", { plan: BARAKAH_PLAN })}>ব্লু ব্যাজের জন্য আবেদন করুন</button>
+            <button className="btn btn-gold" style={{ width: "100%" }} onClick={() => navigate("/checkout", { state: { plan: BARAKAH_PLAN } })}>ব্লু ব্যাজের জন্য আবেদন করুন</button>
           </div>
         </div>
       </div></section>
@@ -583,16 +716,17 @@ function BarakahPage({ go }) {
   );
 }
 
-function StoriesPage({ go }) {
+function StoriesPage() {
+  const navigate = useNavigate();
   return (
     <>
-      <PageHead go={go} title="সফলতার গল্প" desc="পরিবার, গোপনীয়তা ও দ্বীনি অগ্রাধিকারের মাধ্যমে তৈরি হওয়া কিছু ডেমো অভিজ্ঞতা।" />
+      <PageHead title="সফলতার গল্প" desc="পরিবার, গোপনীয়তা ও দ্বীনি অগ্রাধিকারের মাধ্যমে তৈরি হওয়া কিছু ডেমো অভিজ্ঞতা।" />
       <section className="block"><div className="wrap">
         <div className="stories">{STORIES.map((s) => <StoryCard key={s.n} s={s} />)}</div>
         <div className="ctaband" style={{ marginTop: 30 }}>
           <h2 className="serif">আপনার গল্প শুরু করুন</h2>
           <p>বায়োডাটা তৈরি করুন এবং উপযুক্ত প্রোফাইল খুঁজে দেখুন।</p>
-          <button className="btn btn-gold" onClick={() => go("register")}>বায়োডাটা তৈরি করুন</button>
+          <button className="btn btn-gold" onClick={() => navigate("/register")}>বায়োডাটা তৈরি করুন</button>
         </div>
       </div></section>
     </>
@@ -600,7 +734,8 @@ function StoriesPage({ go }) {
 }
 
 /* ---------- ASSISTED MATCHMAKING SERVICE ---------- */
-function LegacyAssistedPage({ go, fire }) {
+function LegacyAssistedPage({ fire }) {
+  const navigate = useNavigate();
   const [done, setDone] = useState(false);
   const [ref] = useState(() => "AMS-" + Math.floor(10000 + Math.random() * 90000));
   const [form, setForm] = useState({ name: "", contact: "", looking: "পাত্রী", prefs: "" });
@@ -623,7 +758,7 @@ function LegacyAssistedPage({ go, fire }) {
   ];
   if (done) return (
     <>
-      <PageHead go={go} title="অনুরোধ গ্রহণ করা হয়েছে" desc="আমাদের ম্যাচমেকিং উপদেষ্টা শীঘ্রই আপনার সাথে যোগাযোগ করবেন।" />
+      <PageHead title="অনুরোধ গ্রহণ করা হয়েছে" desc="আমাদের ম্যাচমেকিং উপদেষ্টা শীঘ্রই আপনার সাথে যোগাযোগ করবেন।" />
       <section className="block"><div className="wrap"><div className="success">
         <div className="badge"><Ic d={I.check} s={36} c={C.green600} sw={2.2} /></div>
         <h2 className="serif">জাযাকাল্লাহ! অনুরোধ জমা হয়েছে</h2>
@@ -631,15 +766,15 @@ function LegacyAssistedPage({ go, fire }) {
         <div className="pid">{ref}</div>
         <p style={{ marginBottom: 20 }}>একজন নিবেদিত উপদেষ্টা আপনার চাহিদা বুঝে বাছাইকৃত প্রস্তাব নিয়ে যোগাযোগ করবেন। (এটি একটি ডেমো — তথ্য সংরক্ষণ হয়নি।)</p>
         <div className="actionbar" style={{ justifyContent: "center" }}>
-          <button className="btn btn-gold" onClick={() => go("browse")}>প্রোফাইল দেখুন</button>
-          <button className="btn btn-ghost" onClick={() => go("home")}>হোমে ফিরুন</button>
+          <button className="btn btn-gold" onClick={() => navigate("/browse")}>প্রোফাইল দেখুন</button>
+          <button className="btn btn-ghost" onClick={() => navigate("/")}>হোমে ফিরুন</button>
         </div>
       </div></div></section>
     </>
   );
   return (
     <>
-      <PageHead go={go} title="সহায়ক ম্যাচমেকিং সেবা" desc="আমাদের অভিজ্ঞ ম্যাচমেকিং উপদেষ্টা আপনার হয়ে উপযুক্ত জীবনসঙ্গী খুঁজে দেন — ব্যক্তিগত পরামর্শ, বাছাইকৃত প্রস্তাব ও ব্যক্তিগত ছোঁয়ায়।" />
+      <PageHead title="সহায়ক ম্যাচমেকিং সেবা" desc="আমাদের অভিজ্ঞ ম্যাচমেকিং উপদেষ্টা আপনার হয়ে উপযুক্ত জীবনসঙ্গী খুঁজে দেন — ব্যক্তিগত পরামর্শ, বাছাইকৃত প্রস্তাব ও ব্যক্তিগত ছোঁয়ায়।" />
       <section className="block"><div className="wrap">
         <div className="head"><div className="kicker">প্রিমিয়াম সেবা</div><h2 className="serif">আপনার হয়ে খুঁজে দেন আমাদের উপদেষ্টা</h2><p>নিজে খোঁজার সময় নেই? একজন নিবেদিত উপদেষ্টাকে দায়িত্ব দিন — তিনি আপনাকে বুঝে, উপযুক্ত ম্যাচ বেছে, যোগাযোগ ও সাক্ষাৎ পর্যন্ত সব সামলান।</p></div>
         <div className="content-grid">{pillars.map((v) => (
@@ -664,7 +799,7 @@ function LegacyAssistedPage({ go, fire }) {
             <li>পারস্পরিক ম্যাচের সাথে সাক্ষাৎ ও যোগাযোগ সহজীকরণ</li>
             <li>প্রতিটি ধাপে আপনার অনুমোদন ও অভিভাবকের সম্পৃক্ততা</li>
           </ul>
-          <div className="guard" style={{ marginTop: 18 }}><Ic d={I.moon} s={20} c={C.gold} /> <span>সহায়ক ম্যাচমেকিং সেবা ভিআইপি সদস্যপদের অন্তর্ভুক্ত। <a style={{ color: C.green700, fontWeight: 600 }} onClick={() => go("membership")}>প্যাকেজ দেখুন</a></span></div>
+          <div className="guard" style={{ marginTop: 18 }}><Ic d={I.moon} s={20} c={C.gold} /> <span>সহায়ক ম্যাচমেকিং সেবা ভিআইপি সদস্যপদের অন্তর্ভুক্ত। <a style={{ color: C.green700, fontWeight: 600 }} onClick={() => navigate("/membership")}>প্যাকেজ দেখুন</a></span></div>
         </div>
         <div className="formcard" style={{ marginBottom: 0 }}>
           <h3><Ic d={I.users} s={18} /> উপদেষ্টার জন্য অনুরোধ করুন</h3>
@@ -681,7 +816,10 @@ function LegacyAssistedPage({ go, fire }) {
   );
 }
 
-function LegacyCheckoutPage({ go, plan, fire }) {
+function LegacyCheckoutPage({ fire }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const plan = location.state?.plan;
   const selected = plan || PLANS[1];
   const [done, setDone] = useState(false);
   const [ref] = useState(() => "PAY-" + Math.floor(10000 + Math.random() * 90000));
@@ -693,20 +831,20 @@ function LegacyCheckoutPage({ go, plan, fire }) {
   };
   if (done) return (
     <>
-      <PageHead go={go} title="সদস্যপদ অনুরোধ সম্পন্ন" desc="আপনার পেমেন্ট তথ্য যাচাইয়ের জন্য জমা হয়েছে।" />
+      <PageHead title="সদস্যপদ অনুরোধ সম্পন্ন" desc="আপনার পেমেন্ট তথ্য যাচাইয়ের জন্য জমা হয়েছে।" />
       <section className="block"><div className="wrap"><div className="success">
         <div className="badge"><Ic d={I.check} s={36} c={C.green600} sw={2.2} /></div>
         <h2 className="serif">{selected.tag} প্যাকেজ</h2>
         <p>রেফারেন্স নম্বর:</p>
         <div className="pid">{ref}</div>
         <p style={{ marginBottom: 20 }}>যাচাই সম্পন্ন হলে ড্যাশবোর্ডে সদস্যপদ সক্রিয় দেখাবে।</p>
-        <button className="btn btn-gold" onClick={() => go("dashboard", { id: form.phone, plan: selected.tag })}>ড্যাশবোর্ড দেখুন</button>
+        <button className="btn btn-gold" onClick={() => navigate("/dashboard", { state: { id: form.phone, plan: selected.tag } })}>ড্যাশবোর্ড দেখুন</button>
       </div></div></section>
     </>
   );
   return (
     <>
-      <PageHead go={go} title="সদস্যপদ নিন" desc={`${selected.tag} প্যাকেজের জন্য পেমেন্ট তথ্য জমা দিন।`} />
+      <PageHead title="সদস্যপদ নিন" desc={`${selected.tag} প্যাকেজের জন্য পেমেন্ট তথ্য জমা দিন।`} />
       <section className="block"><div className="wrap"><div className="contact-panel content-page">
         <div className={"plan" + (selected.feat ? " feat" : "")}>
           {selected.feat && <span className="ribbon">জনপ্রিয়</span>}
@@ -731,7 +869,10 @@ function LegacyCheckoutPage({ go, plan, fire }) {
   );
 }
 
-function InterestPage({ go, profile, fire }) {
+function InterestPage({ fire }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const profile = location.state?.profile;
   const p = profile || PROFILES[0];
   const [done, setDone] = useState(false);
   const [ref] = useState(() => "INT-" + Math.floor(10000 + Math.random() * 90000));
@@ -743,22 +884,22 @@ function InterestPage({ go, profile, fire }) {
   };
   if (done) return (
     <>
-      <PageHead go={go} title="আগ্রহ প্রকাশ করা হয়েছে" desc={`প্রোফাইল #${p.id}-এর জন্য আপনার অনুরোধ জমা হয়েছে।`} />
+      <PageHead title="আগ্রহ প্রকাশ করা হয়েছে" desc={`প্রোফাইল #${p.id}-এর জন্য আপনার অনুরোধ জমা হয়েছে।`} />
       <section className="block"><div className="wrap"><div className="success">
         <div className="badge"><Ic d={I.check} s={36} c={C.green600} sw={2.2} /></div>
         <h2 className="serif">ওয়ালি যাচাইয়ের অপেক্ষায়</h2>
         <p>রেফারেন্স নম্বর:</p>
         <div className="pid">{ref}</div>
         <div className="actionbar" style={{ justifyContent: "center" }}>
-          <button className="btn btn-gold" onClick={() => go("browse")}>আরও প্রোফাইল দেখুন</button>
-          <button className="btn btn-ghost" onClick={() => go("dashboard", { id: form.phone })}>ড্যাশবোর্ড দেখুন</button>
+          <button className="btn btn-gold" onClick={() => navigate("/browse")}>আরও প্রোফাইল দেখুন</button>
+          <button className="btn btn-ghost" onClick={() => navigate("/dashboard", { state: { id: form.phone } })}>ড্যাশবোর্ড দেখুন</button>
         </div>
       </div></div></section>
     </>
   );
   return (
     <>
-      <PageHead go={go} title="আগ্রহ প্রকাশ" desc={`প্রোফাইল #${p.id}-এর জন্য অভিভাবক-সম্পৃক্ত যোগাযোগ অনুরোধ পাঠান।`} />
+      <PageHead title="আগ্রহ প্রকাশ" desc={`প্রোফাইল #${p.id}-এর জন্য অভিভাবক-সম্পৃক্ত যোগাযোগ অনুরোধ পাঠান।`} />
       <section className="block"><div className="wrap"><div className="contact-panel content-page">
         <div className="info-card">
           <h3><Ic d={I.users} s={18} /> প্রোফাইল সারাংশ</h3>
@@ -768,7 +909,7 @@ function InterestPage({ go, profile, fire }) {
             <li>{p.job}</li>
             <li>{p.deen}</li>
           </ul>
-          <button className="btn btn-ghost" style={{ marginTop: 18 }} onClick={() => go("profile", p)}>প্রোফাইলে ফিরুন</button>
+          <button className="btn btn-ghost" style={{ marginTop: 18 }} onClick={() => navigate(`/profile/${p.id}`)}>প্রোফাইলে ফিরুন</button>
         </div>
         <div className="formcard" style={{ marginBottom: 0 }}>
           <h3><Ic d={I.shield} s={18} /> অভিভাবক তথ্য</h3>
@@ -784,11 +925,14 @@ function InterestPage({ go, profile, fire }) {
   );
 }
 
-function DashboardPage({ go, user }) {
+function DashboardPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const user = location.state || {};
   const completion = 78;
   return (
     <>
-      <PageHead go={go} title="ড্যাশবোর্ড" desc="প্রোফাইল, আগ্রহ অনুরোধ ও সদস্যপদ এক জায়গায় দেখুন।" />
+      <PageHead title="ড্যাশবোর্ড" desc="প্রোফাইল, আগ্রহ অনুরোধ ও সদস্যপদ এক জায়গায় দেখুন।" />
       <section className="block"><div className="wrap">
         <div className="dashboard-grid">
           <div className="dash-card completion-card"><div className="completion-ring" style={{ "--completion": completion }}><strong>{completion}%</strong></div><div><b>প্রোফাইল সম্পন্ন</b><span>আরও ৩টি তথ্য যোগ করুন</span></div></div>
@@ -804,8 +948,8 @@ function DashboardPage({ go, user }) {
               <li>পছন্দের প্রোফাইল ব্রাউজ করুন</li>
             </ul>
             <div className="actionbar">
-              <button className="btn btn-gold" onClick={() => go("register")}>বায়োডাটা আপডেট</button>
-              <button className="btn btn-ghost" onClick={() => go("browse")}>প্রোফাইল দেখুন</button>
+              <button className="btn btn-gold" onClick={() => navigate("/register")}>বায়োডাটা আপডেট</button>
+              <button className="btn btn-ghost" onClick={() => navigate("/browse")}>প্রোফাইল দেখুন</button>
             </div>
           </div>
           <div className="info-card">
@@ -823,7 +967,8 @@ function DashboardPage({ go, user }) {
 }
 
 /* ---------- REGISTER (biodata form) ---------- */
-function Register({ go, fire }) {
+function Register({ fire }) {
+  const navigate = useNavigate();
   const [done, setDone] = useState(false);
   const [step, setStep] = useState(1);
   const [errors, setErrors] = useState({});
@@ -864,11 +1009,40 @@ function Register({ go, fire }) {
     const next = e.target.value;
     setF({ ...f, unionId: next, union: bn(formUnions.find((u) => u.id === next)) });
   };
+  const publicProfile = {
+    id: newId,
+    who: f.gender === "নারী" || f.gender === "পাত্রী" ? "পাত্রী" : "পাত্র",
+    age: f.age || "—",
+    height: f.height || "—",
+    marital: f.marital || "—",
+    complexion: f.complexion || "—",
+    dist: f.dist || "—",
+    area: [f.upazila, f.thana, f.union, f.village].filter(Boolean).join(", ") || "—",
+    job: f.job || "—",
+    edu: [f.edu, f.institute].filter(Boolean).join(" · ") || "—",
+    deen: f.deen || "—",
+    religious: [f.prayer, f.quran, f.fiqh, f.mahram, f.religiousStudy].filter(Boolean).join("। ") || "তথ্য দেওয়া হয়নি।",
+    family: [f.family, f.familyDeen, f.economicStatus, f.siblings].filter(Boolean).join("। ") || "তথ্য দেওয়া হয়নি।",
+    about: [f.about, f.expectedQualities, f.expectedAge && `প্রত্যাশিত বয়স: ${f.expectedAge}`, f.expectedEducation && `প্রত্যাশিত শিক্ষা: ${f.expectedEducation}`].filter(Boolean).join("। ") || "তথ্য দেওয়া হয়নি।",
+    verified: false,
+  };
+  const copyCreatedLink = async () => {
+    try { await navigator.clipboard.writeText(shareUrlFor(publicProfile)); fire("বায়োডাটার লিংক কপি করা হয়েছে!"); }
+    catch { fire("লিংক কপি করা যায়নি।", "error"); }
+  };
+  const shareCreatedProfile = async () => {
+    const url = shareUrlFor(publicProfile);
+    if (navigator.share) {
+      try { await navigator.share({ title: `নূর নিকাহ বায়োডাটা #${newId}`, text: "এই বায়োডাটাটি দেখুন", url }); }
+      catch (error) { if (error?.name !== "AbortError") fire("শেয়ার করা যায়নি।", "error"); }
+    } else copyCreatedLink();
+  };
   const submit = () => {
     const nextErrors = { phone: !f.phone ? "মোবাইল নম্বর আবশ্যক" : "", consent: !f.consent ? "সম্মতি দেওয়া আবশ্যক" : "" };
     setErrors(nextErrors);
     if (nextErrors.phone || nextErrors.consent) { fire("আবশ্যক তথ্যগুলো পূরণ করুন"); return; }
     localStorage.removeItem("noornikah-biodata-draft");
+    localStorage.setItem(`noornikah-profile-${newId}`, JSON.stringify(publicProfile));
     setDone(true); window.scrollTo(0, 0);
   };
   const nextStep = () => {
@@ -883,23 +1057,28 @@ function Register({ go, fire }) {
   };
   const stepLabels = ["সাধারণ", "দ্বীন ও শিক্ষা", "পরিবার", "বিয়ে পরিকল্পনা", "প্রত্যাশা", "যোগাযোগ"];
   if (done) return (
-    <><div className="pagehead"><div className="wrap"><div className="crumb"><a onClick={() => go("home")}>হোম</a> <span>›</span> <span>রেজিস্ট্রেশন</span></div><h1 className="serif">বায়োডাটা তৈরি</h1></div></div>
+    <>
+      <div className="pagehead"><div className="wrap"><div className="crumb"><Link to="/">হোম</Link> <span>›</span> <span>রেজিস্ট্রেশন</span></div><h1 className="serif">বায়োডাটা তৈরি</h1></div></div>
       <section className="block"><div className="wrap"><div className="success">
         <div className="badge"><Ic d={I.check} s={36} c={C.green600} sw={2.2} /></div>
         <h2 className="serif">আলহামদুলিল্লাহ! বায়োডাটা তৈরি হয়েছে</h2>
         <p>আপনার ডেমো প্রোফাইল আইডি:</p>
         <div className="pid">#{newId}</div>
-        <p style={{ marginBottom: 22 }}>পরবর্তী ধাপে প্রোফাইল যাচাই ও ছবি যোগ করতে পারবেন। (এটি একটি ডেমো — তথ্য সংরক্ষণ হয়নি।)</p>
-        <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-          <button className="btn btn-gold" onClick={() => go("browse")}>প্রোফাইল ব্রাউজ করুন</button>
-          <button className="btn btn-ghost" onClick={() => go("home")}>হোমে ফিরুন</button>
+        <p style={{ marginBottom: 22 }}>আপনার বায়োডাটা শেয়ার করুন অথবা PDF হিসেবে ডাউনলোড করুন।</p>
+        <div className="actionbar" style={{ justifyContent: "center" }}>
+          <button className="btn btn-gold" onClick={() => navigate(`/profile/${newId}`)}>প্রোফাইল দেখুন</button>
+          <button className="btn btn-green" onClick={shareCreatedProfile}>শেয়ার করুন</button>
+          <button className="btn btn-ghost" onClick={copyCreatedLink}>লিংক কপি করুন</button>
+          <button className="btn btn-ghost" onClick={() => navigate(`/profile/${newId}`, { state: { downloadPdf: true } })}>PDF ডাউনলোড</button>
         </div>
-      </div></div></section></>
+        <p style={{ textAlign: "center", marginTop: 24, fontSize: 14, color: C.muted }}>অন্যান্য প্রোফাইল দেখতে <a onClick={() => navigate('/browse')} style={{ cursor: 'pointer', color: C.green700, fontWeight: 600 }}>ব্রাউজ করুন</a> অথবা <a onClick={() => navigate('/')} style={{ cursor: 'pointer', color: C.green700, fontWeight: 600 }}>হোমে ফিরুন</a>।</p>
+      </div></div></section>
+    </>
   );
   return (
     <>
       <div className="pagehead"><div className="wrap">
-        <div className="crumb"><a onClick={() => go("home")}>হোম</a> <span>›</span> <span>রেজিস্ট্রেশন</span></div>
+        <div className="crumb"><Link to="/">হোম</Link> <span>›</span> <span>রেজিস্ট্রেশন</span></div>
         <h1 className="serif">বায়োডাটা তৈরি করুন</h1><p>বিনামূল্যে আপনার প্রোফাইল তৈরি করুন। সব তথ্য গোপন থাকে।</p>
       </div></div>
       <section className="block" style={{ paddingTop: 40 }}><div className="wrap"><div className="formwrap">
@@ -995,29 +1174,30 @@ function Register({ go, fire }) {
           </div>
         </div>}
         <div className="step-actions">
-          <button className="btn btn-ghost" onClick={() => step === 1 ? go("home") : setStep(step - 1)}>{step === 1 ? "বাতিল" : "← পেছনে"}</button>
+          <button className="btn btn-ghost" onClick={() => step === 1 ? navigate("/") : setStep(step - 1)}>{step === 1 ? "বাতিল" : "← পেছনে"}</button>
           <button className="btn draft-btn" onClick={saveDraft}>খসড়া রাখুন</button>
           {step < 6
             ? <button className="btn btn-gold btn-lg" onClick={nextStep}>পরবর্তী ধাপ →</button>
             : <button className="btn btn-gold btn-lg" onClick={submit}><Ic d={I.check} s={18} c={C.green900} /> বায়োডাটা জমা দিন</button>}
         </div>
-        <p style={{ textAlign: "center", marginTop: 16, fontSize: 13, color: C.muted }}>ইতিমধ্যে অ্যাকাউন্ট আছে? <a style={{ color: C.green700, fontWeight: 600 }} onClick={() => go("login")}>লগইন করুন</a></p>
+        <p style={{ textAlign: "center", marginTop: 16, fontSize: 13, color: C.muted }}>ইতিমধ্যে অ্যাকাউন্ট আছে? <a style={{ color: C.green700, fontWeight: 600 }} onClick={() => navigate("/login")}>লগইন করুন</a></p>
       </div></div></section>
     </>
   );
 }
 
 /* ---------- LOGIN ---------- */
-function Login({ go, fire }) {
+function Login({ fire }) {
+  const navigate = useNavigate();
   const [id, setId] = useState(""); const [pw, setPw] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const login = () => {
     if (!id || !pw) { fire("মোবাইল/প্রোফাইল আইডি ও পাসওয়ার্ড দিন"); return; }
-    go("dashboard", { id });
+    navigate("/dashboard", { state: { id } });
   };
   return (
     <>
-      <div className="pagehead"><div className="wrap"><div className="crumb"><a onClick={() => go("home")}>হোম</a> <span>›</span> <span>লগইন</span></div><h1 className="serif">লগইন করুন</h1></div></div>
+      <div className="pagehead"><div className="wrap"><div className="crumb"><Link to="/">হোম</Link> <span>›</span> <span>লগইন</span></div><h1 className="serif">লগইন করুন</h1></div></div>
       <section className="block"><div className="wrap"><div className="authcard">
         <div style={{ textAlign: "center", marginBottom: 18 }}>{Logo}</div>
         <h2 className="serif" style={{ textAlign: "center" }}>স্বাগতম</h2>
@@ -1025,81 +1205,66 @@ function Login({ go, fire }) {
         <div className="fgroup"><label>মোবাইল / প্রোফাইল আইডি</label><input value={id} onChange={(e) => setId(e.target.value)} placeholder="01XXXXXXXXX বা NN-XXXX" /></div>
         <div className="fgroup"><label>পাসওয়ার্ড</label><div className="password-field"><input type={showPassword ? "text" : "password"} value={pw} onChange={(e) => setPw(e.target.value)} placeholder="••••••••" /><button type="button" onClick={() => setShowPassword((value) => !value)} aria-label={showPassword ? "পাসওয়ার্ড লুকান" : "পাসওয়ার্ড দেখুন"}>{showPassword ? "লুকান" : "দেখুন"}</button></div></div>
         <button className="btn btn-gold" style={{ width: "100%", marginTop: 6 }} onClick={login}>লগইন</button>
-        <p style={{ textAlign: "center", marginTop: 18, fontSize: 14, color: C.muted }}>অ্যাকাউন্ট নেই? <a style={{ color: C.green700, fontWeight: 600 }} onClick={() => go("register")}>বায়োডাটা তৈরি করুন</a></p>
+        <p style={{ textAlign: "center", marginTop: 18, fontSize: 14, color: C.muted }}>অ্যাকাউন্ট নেই? <a style={{ color: C.green700, fontWeight: 600 }} onClick={() => navigate("/register")}>বায়োডাটা তৈরি করুন</a></p>
       </div></div></section>
     </>
   );
 }
 
 /* ---------- root router ---------- */
-const HomeView = (props) => <HomePage {...props} />;
+const HomeView = (props) => <Home {...props} />;
 const BrowseView = (props) => <Browse {...props} />;
 const ProfileView = (props) => <ProfileDetail {...props} />;
 const RegisterView = (props) => <Register {...props} />;
 const LoginView = (props) => <Login {...props} />;
-const MembershipView = (props) => <MembershipPage {...props} />;
-const AssistedView = (props) => <AssistedPage {...props} />;
-const CheckoutView = (props) => <CheckoutPage {...props} />;
+const MembershipView = (props) => <LegacyMembershipPage {...props} />;
+const AssistedView = (props) => <LegacyAssistedPage {...props} />;
+const CheckoutView = (props) => <LegacyCheckoutPage {...props} />;
 
 export default function NoorNikah() {
-  const [page, setPage] = useState("home");
-  const [data, setData] = useState(null);
   const [toast, setToast] = useState(null);
   const [theme, setTheme] = useState(() => localStorage.getItem("noornikah-theme") || "light");
-  const navigate = useNavigate();
   const location = useLocation();
+
   const fire = (message, type) => {
     const inferredType = type || (/সংরক্ষিত|সফল|হয়েছে/.test(message) ? "success" : /পূরণ|আবশ্যক|দিন|সম্মতি/.test(message) ? "error" : "info");
     setToast({ message, type: inferredType });
     setTimeout(() => setToast(null), 3000);
   };
+
   useEffect(() => {
-    if (page === "home" && data?.scroll) {
-      setTimeout(() => document.getElementById(data.scroll)?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
-    }
-  }, [page, data]);
-  useEffect(() => {
-    const path = (location?.pathname || "").replace(/^\/+/, "");
-    const [p, id] = path.split("/");
-    if (p === "profile" && id) {
-      const prof = PROFILES.find((x) => x.id === id) || null;
-      setPage("profile"); setData(prof);
-      return;
-    }
-    if (!p) { setPage("home"); setData(location.state || null); return; }
-    setPage(p);
-    setData(location.state || null);
+    // Scroll to top on page change
+    window.scrollTo(0, 0);
   }, [location]);
-  const go = (pg, d = null) => {
-    setPage(pg); setData(d);
-    if (pg === "profile" && d?.id) navigate(`/profile/${d.id}`, { state: d });
-    else navigate(pg === "home" ? "/" : `/${pg}`, { state: d });
-    if (typeof window !== "undefined" && !d?.scroll) window.scrollTo(0, 0);
-  };
+
   const toggleTheme = () => setTheme((current) => { const next = current === "dark" ? "light" : "dark"; localStorage.setItem("noornikah-theme", next); return next; });
+
   return (
     <div className={`nn${theme === "dark" ? " dark" : ""}`}>
-      <Header page={page} go={go} theme={theme} toggleTheme={toggleTheme} />
+      <Header theme={theme} toggleTheme={toggleTheme} />
       <React.Suspense fallback={<div className="wrap page-skeleton" aria-label="পেজ লোড হচ্ছে"><span /><span /><span /></div>}>
-        {page === "home" && <HomeView go={go} fire={fire} />}
-        {page === "browse" && <BrowseView go={go} prefs={data} />}
-        {page === "profile" && <ProfileView go={go} profile={data} fire={fire} />}
-        {page === "register" && <RegisterView go={go} fire={fire} />}
-        {page === "login" && <LoginView go={go} fire={fire} />}
-        {page === "membership" && <MembershipView go={go} />}
-        {page === "barakah" && <BarakahPage go={go} />}
-        {page === "assisted" && <AssistedView go={go} fire={fire} />}
-        {page === "stories" && <StoriesPage go={go} />}
-        {page === "checkout" && <CheckoutView go={go} routeState={data} fire={fire} />}
-        {page === "interest" && <InterestPage go={go} profile={data?.profile} fire={fire} />}
-        {page === "dashboard" && <DashboardPage go={go} user={data} />}
-        {page === "contact" && <ContactPage go={go} fire={fire} />}
-        {page === "safety" && <SafetyPage go={go} />}
-        {page === "faq" && <FaqPage go={go} />}
-        {page === "privacy" && <PrivacyPage go={go} />}
-        {page === "terms" && <TermsPage go={go} />}
+        <Routes>
+          <Route path="/" element={<HomeView fire={fire} />} />
+          <Route path="/browse" element={<BrowseView fire={fire} />} />
+          <Route path="/profile/:id" element={<ProfileView fire={fire} />} />
+          <Route path="/register" element={<RegisterView fire={fire} />} />
+          <Route path="/login" element={<LoginView fire={fire} />} />
+          <Route path="/membership" element={<MembershipView />} />
+          <Route path="/barakah" element={<BarakahPage />} />
+          <Route path="/assisted" element={<AssistedView fire={fire} />} />
+          <Route path="/stories" element={<StoriesPage />} />
+          <Route path="/checkout" element={<CheckoutView fire={fire} />} />
+          <Route path="/interest" element={<InterestPage fire={fire} />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/contact" element={<ContactPage fire={fire} />} />
+          <Route path="/safety" element={<SafetyPage />} />
+          <Route path="/faq" element={<FaqPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+        </Routes>
       </React.Suspense>
-      <Footer go={go} />
+      <Footer />
+      <AiAssistant />
       {toast && <div className={`toast ${toast.type}`} role="status" aria-live="polite"><span>{toast.type === "success" ? "✓" : toast.type === "error" ? "!" : "i"}</span>{toast.message}</div>}
     </div>
   );

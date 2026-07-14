@@ -1,5 +1,5 @@
 import React from "react";
-import { C, Ic, I, PageHead } from "./shared";
+import { PageHead } from "./shared";
 
 export default function RegisterPage({ go }) {
   return (

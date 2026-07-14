@@ -105,7 +105,7 @@ export const BrideAvatar = ({ s = 64 }) => (
   </svg>
 );
 
-export const ProfileAvatar = ({ p, s = 64, color = "rgba(255,255,255,.55)", sw = 1.5 }) =>
+export const ProfileAvatar = ({ p, s = 64 }) =>
   p.who === "পাত্রী" ? <BrideAvatar s={s} /> : <GroomAvatar s={s} />;
 
 export const Logo = (
@@ -137,6 +137,7 @@ export const getThanasByDistrictSafe = (districtId) => (districtId ? (_getThanas
 export const getUnionsByUpazilaSafe = (upazilaId) => (upazilaId ? (_getUnionsByUpazila ? _getUnionsByUpazila(upazilaId) : []) : []);
 
 export const PCard = ({ p, go, match }) => {
+  const openProfile = () => go ? go("profile", p) : window.location.assign(`/profile/${p.id}`);
   const [saved, setSaved] = useState(() => {
     try { return JSON.parse(localStorage.getItem("noornikah-shortlist") || "[]").includes(p.id); } catch { return false; }
   });
@@ -163,11 +164,11 @@ export const PCard = ({ p, go, match }) => {
     </div>
     <div className="body">
       <div className="match-facts"><span>◷ {(new Date().getFullYear() - p.age).toLocaleString("bn-BD", { useGrouping: false })}</span><span><Ic d={I.briefcase} s={14} c={C.ink} /> {p.job}</span><span><Ic d={I.heart} s={14} c={C.ink} /> {p.marital}</span><span><Ic d={I.pin} s={14} c={C.ink} /> {p.dist}</span></div>
-      <button className="btn full-bio" onClick={() => go("profile", p)}>সম্পূর্ণ বায়োডাটা দেখুন <span>→</span></button>
+      <button className="btn full-bio" onClick={openProfile}>সম্পূর্ণ বায়োডাটা দেখুন <span>→</span></button>
     </div>
   </div>
 ) : (
-  <div className="pcard" onClick={() => go("profile", p)}>
+  <div className="pcard" onClick={openProfile}>
     <div className="avatar">
       <ProfileAvatar p={p} s={116} color="rgba(255,255,255,.48)" sw={1.35} />
       <span className="priv"><Ic d={I.lock} s={12} c="#fff" /> গোপন</span><button className={`shortlist${saved ? " saved" : ""}`} onClick={toggleSaved}>{saved ? "♥" : "♡"}</button>
@@ -183,17 +184,23 @@ export const PCard = ({ p, go, match }) => {
   );
 };
 
-export const PlanCard = ({ p, go }) => (
-  <div className={"plan" + (p.feat ? " feat" : "")}>
+export const PlanCard = ({ p, go }) => {
+  const choosePlan = () => {
+    if (go) return p.id === "free" ? go("register") : p.id === "barakah" ? go("barakah") : go("checkout", { plan: p });
+    if (p.id === "free") window.location.assign("/register");
+    else if (p.id === "barakah") window.location.assign("/barakah");
+    else window.location.assign("/checkout");
+  };
+  return <div className={"plan" + (p.feat ? " feat" : "")}>
     {p.feat && <span className="ribbon">জনপ্রিয়</span>}
     <span className="tag">{p.tag}</span>
     {p.meaning && <div style={{ fontSize: 13, color: p.feat ? "rgba(255,255,255,.72)" : C.muted, marginTop: 7, lineHeight: 1.45 }}>{p.meaning}</div>}
     <div className="price serif">{p.price}</div>
     <div className="per">{p.per}</div>
     <ul>{p.items.map((it) => (<li key={it}><Ic d={I.check} s={17} c={p.feat ? C.goldSoft : C.green600} /> <span>{it}</span></li>))}</ul>
-    <button className={"btn " + (p.feat ? "btn-gold" : "btn-green")} onClick={() => p.id === "free" ? go("register") : p.id === "barakah" ? go("barakah") : go("checkout", { plan: p })}>{p.cta}</button>
+    <button className={"btn " + (p.feat ? "btn-gold" : "btn-green")} onClick={choosePlan}>{p.cta}</button>
   </div>
-);
+};
 
 export const StoryCard = ({ s }) => (
   <div className="story">
@@ -203,10 +210,10 @@ export const StoryCard = ({ s }) => (
   </div>
 );
 
-export const PageHead = ({ go, title, desc }) => (
-  <div className="pagehead"><div className="wrap">
-    <div className="crumb"><a onClick={() => go("home")}>হোম</a> <span>›</span> <span>{title}</span></div>
+export const PageHead = ({ go, title, desc }) => {
+  return <div className="pagehead"><div className="wrap">
+    <div className="crumb"><a href="/" onClick={(event) => { if (go) { event.preventDefault(); go("home"); } }}>হোম</a> <span>›</span> <span>{title}</span></div>
     <h1 className="serif">{title}</h1>
     {desc && <p>{desc}</p>}
-  </div></div>
-);
+  </div></div>;
+};

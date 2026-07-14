@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { C, Ic, I, PROFILES, ALL_DIVISIONS, ALL_DISTRICTS, getDistrictsByDivisionSafe, getUpazilasByDistrictSafe, getThanasByDistrictSafe, getUnionsByUpazilaSafe, PCard, PageHead, bn } from "./shared";
+import { PROFILES, ALL_DIVISIONS, ALL_DISTRICTS, getDistrictsByDivisionSafe, getUpazilasByDistrictSafe, getThanasByDistrictSafe, getUnionsByUpazilaSafe, PCard, PageHead, bn } from "./shared";
 
 export default function BrowsePage({ go, routeState }) {
   const [who, setWho] = useState(routeState?.who || "পাত্রী");
