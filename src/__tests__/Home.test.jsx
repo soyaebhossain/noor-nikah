@@ -1,8 +1,10 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import HomePage from '../pages/HomePage'
+import { MemoryRouter } from 'react-router-dom'
+import NoorNikah from '../NoorNikah'
 
-test('renders HomePage heading', () => {
-  render(<HomePage go={() => {}} fire={() => {}} />)
-  expect(screen.getByText(/যেখানে শুরু হয়/i)).toBeTruthy()
+test('renders the home route heading', () => {
+  window.scrollTo = vi.fn()
+  render(<MemoryRouter initialEntries={['/']}><NoorNikah /></MemoryRouter>)
+  expect(screen.getByRole('heading', { level: 1, name: /যেখানে শুরু হয় পবিত্র বন্ধন/i })).toBeTruthy()
 })
